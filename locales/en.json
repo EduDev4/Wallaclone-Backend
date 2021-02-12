@@ -1,0 +1,11 @@
+{
+  "EXAMPLE": {
+    "TEXT": "Text",
+    "HELLO": "Hello %s, i'm from %s",
+    "NAME_PHRASE": "My name is {{name}}",
+    "MOUSE": {
+      "one": "%s Mouse",
+      "other": "%s Mice"
+    }
+  }
+}

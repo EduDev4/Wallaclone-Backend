@@ -1,0 +1,33 @@
+{
+  "name": "wallaclonebackend",
+  "version": "1.0.0",
+  "description": "Wallaclone Backend",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "cross-env NODE_ENV=development DEBUG=wallaclonebackend:* PORT=3000 nodemon ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "ejs": "~2.6.1",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "i18n": "^0.13.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@ssh.dev.azure.com:v3/edudev/Wallaclone/WallacloneBackend"
+  },
+  "keywords": [
+    "backend"
+  ],
+  "author": "Speedy Coders",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.7"
+  }
+}
