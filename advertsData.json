@@ -1,0 +1,35 @@
+[
+  {
+    "name": "patinete",
+    "image": "/images/patinete.jpg",
+    "description": "Croissant toffee icing carrot cake. Lollipop sesame snaps donut icing tiramisu.",
+    "sale": true,
+    "price": 250,
+    "tags": ["lifestyle", "motor"],
+    "author": "user1",
+    "createdAt": "12-02-2021",
+    "booked": false
+  },
+  {
+    "name": "pc",
+    "image": "/images/portatil.jpg",
+    "description": "Croissant toffee icing carrot cake. Lollipop sesame snaps donut icing tiramisu.",
+    "sale": false,
+    "price": 620,
+    "tags": ["work", "lifestyle"],
+    "author": "user2",
+    "createdAt": "12-02-2021",
+    "booked": false
+  },
+  {
+    "name": "carrito",
+    "image": "/images/carrito.jpg",
+    "description": "Croissant toffee icing carrot cake. Lollipop sesame snaps donut icing tiramisu.",
+    "sale": true,
+    "price": 780,
+    "tags": ["lifestyle"],
+    "author": "user1",
+    "createdAt": "12-02-2021",
+    "booked": false
+  }
+]
