@@ -6,9 +6,7 @@
     "sale": true,
     "price": 250,
     "tags": ["lifestyle", "motor"],
-    "author": "user1",
-    "createdAt": "12-02-2021",
-    "booked": false
+    "createdBy": "5454543656363dfedf4t3t"
   },
   {
     "name": "pc",
@@ -17,9 +15,7 @@
     "sale": false,
     "price": 620,
     "tags": ["work", "lifestyle"],
-    "author": "user2",
-    "createdAt": "12-02-2021",
-    "booked": false
+    "createdBy": "5454543ad3463dfedf4ts2"
   },
   {
     "name": "carrito",
@@ -28,8 +24,6 @@
     "sale": true,
     "price": 780,
     "tags": ["lifestyle"],
-    "author": "user1",
-    "createdAt": "12-02-2021",
-    "booked": false
+    "createdBy": "5454543656363dfedf4t3t"
   }
 ]
