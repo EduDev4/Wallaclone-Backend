@@ -1,5 +1,3 @@
-'use strict';
-
 require('dotenv').config();
 
 const readline = require('readline');
@@ -7,28 +5,6 @@ const fs = require('fs');
 const conn = require('./lib/connectMongoose');
 const Advert = require('./models/Advert');
 const User = require('./models/User');
-const Fav = require('./models/Fav');
-
-conn.once('open', async () => {
-  try {
-    const answer = await askUser(
-      'Are you sure you want to initialize the database? (yes/NO):',
-    );
-    if (answer.toLowerCase() !== 'yes') {
-      console.log('Process aborted.');
-      return process.exit(0);
-    }
-
-    await initAdverts();
-    await initUsers();
-    await initFavs();
-
-    conn.close();
-  } catch (error) {
-    console.log('Error:', error);
-    process.exit(1);
-  }
-});
 
 async function initAdverts() {
   console.log('Deleting adverts...');
@@ -70,26 +46,6 @@ async function initUsers() {
   console.log(`Created ${result.length} users.`);
 }
 
-async function initFavs() {
-  console.log('Deleting favs...');
-  await Fav.deleteMany();
-
-  console.log('Loading favs...');
-
-  const result = await Fav.insertMany([
-    {
-      username: 'user1',
-      advertId: '123654',
-    },
-    {
-      username: 'user2',
-      advertId: '456321',
-    },
-  ]);
-
-  console.log(`Created ${result.length} favs.`);
-}
-
 function askUser(questionText) {
   return new Promise((resolve, reject) => {
     const rl = readline.createInterface({
@@ -102,3 +58,23 @@ function askUser(questionText) {
     });
   });
 }
+
+conn.once('open', async () => {
+  try {
+    const answer = await askUser(
+      'Are you sure you want to initialize the database? (yes/NO):',
+    );
+    if (answer.toLowerCase() !== 'yes') {
+      console.log('Process aborted.');
+      return process.exit(0);
+    }
+
+    await initAdverts();
+    await initUsers();
+
+    conn.close();
+  } catch (error) {
+    console.log('Error:', error);
+    process.exit(1);
+  }
+});

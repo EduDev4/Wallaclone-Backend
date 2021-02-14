@@ -1,45 +1,53 @@
-'use strict';
-
 const mongoose = require('mongoose');
 
-const advertSchema = mongoose.Schema({
-  name: {
-    type: String,
-    index: true,
+const advertSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'An advert must have a name'],
+      index: true,
+    },
+    sale: {
+      type: Boolean,
+      default: true,
+      index: true,
+    },
+    price: {
+      type: Number,
+      required: [true, 'An advert must have a price'],
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    image: {
+      type: String,
+      required: [true, 'An advert must have an image'],
+    },
+    tags: {
+      type: [String],
+      index: true,
+      enum: {
+        values: ['mobile', 'work', 'lifestyle', 'motor'],
+        message: 'Tags can be: mobile, work, lifestyle, motor',
+      },
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    state: {
+      type: String,
+      default: 'Available',
+      enum: {
+        values: ['Available', 'Reserved', 'Sold'],
+        message: '{VALUE} it is not a valid state',
+      },
+      index: true,
+    },
   },
-  sale: {
-    type: Boolean,
-    default: true,
-    index: true,
-  },
-  price: {
-    type: Number,
-  },
-  description: {
-    type: String,
-  },
-  image: {
-    type: String,
-  },
-  tags: {
-    type: [String],
-    index: true,
-  },
-  author: {
-    type: String,
-    index: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-    select: false,
-  },
-  booked: {
-    type: Boolean,
-    default: false,
-    index: true,
-  },
-});
+  { timestamps: true },
+);
 
 const Advert = mongoose.model('Advert', advertSchema);
 
