@@ -31,9 +31,13 @@ app.use('/users', usersRouter);
 /**
  * API routes
  */
-app.use('/api/adverts', require('./routes/api/adverts'));
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/favs', require('./routes/api/favs'));
+const loginController = require('./controllers/loginController');
+const jwtAuth = require('./lib/jwtAuth');
+app.post('/apiv1/login', loginController.post);
+
+app.use('/apiv1/adverts', require('./routes/apiv1/adverts'));
+//ruta provisional para comprobar que funciona la protección de ruta con token
+app.use('/apiv1/users', jwtAuth(), require('./routes/apiv1/users'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

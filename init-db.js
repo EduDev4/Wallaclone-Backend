@@ -29,17 +29,17 @@ async function initUsers() {
     {
       username: 'user1',
       email: 'user1@example.com',
-      passwd: await User.hashPassword('1234'),
+      passwd: await User.hashPassword('123456'),
     },
     {
       username: 'user2',
       email: 'user2@example.com',
-      passwd: await User.hashPassword('1234'),
+      passwd: await User.hashPassword('123456'),
     },
     {
       username: 'user3',
       email: 'user3@example.com',
-      passwd: await User.hashPassword('1234'),
+      passwd: await User.hashPassword('123456'),
     },
   ]);
 
@@ -69,8 +69,8 @@ conn.once('open', async () => {
       return process.exit(0);
     }
 
-    await initAdverts();
     await initUsers();
+    await initAdverts();
 
     conn.close();
   } catch (error) {
