@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+const cors = require('cors');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
@@ -8,6 +9,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(cors());
 
 // db connection
 require('./lib/connectMongoose');
@@ -31,9 +33,9 @@ app.use('/users', usersRouter);
 /**
  * API routes
  */
-const loginController = require('./controllers/loginController');
+const userController = require('./controllers/UserController');
 const jwtAuth = require('./lib/jwtAuth');
-app.post('/apiv1/login', loginController.post);
+app.post('/apiv1/users/auth', userController.login);
 
 app.use('/apiv1/adverts', require('./routes/apiv1/adverts'));
 //ruta provisional para comprobar que funciona la protección de ruta con token

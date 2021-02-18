@@ -4,7 +4,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-class LoginController {
+class UserController {
   /**
    * GET /login
    */
@@ -14,7 +14,7 @@ class LoginController {
   /**
    * POST /login
    */
-  async post(req, res, next) {
+  async login(req, res, next) {
     try {
       const username = req.body.username;
       const passwd = req.body.passwd;
@@ -28,6 +28,8 @@ class LoginController {
           requestedAt: req.requestTime,
           message: 'Invalid credentials',
         });
+        // TODO crear error con new Error a next
+
         return;
       }
 
@@ -43,7 +45,11 @@ class LoginController {
           res.status(200).json({
             status: 'success',
             requestedAt: req.requestTime,
-            data: tokenJWT,
+            data: {
+              tokenJWT: tokenJWT,
+              username: username,
+              userEmail: user.email,
+            },
           });
         },
       );
@@ -54,4 +60,4 @@ class LoginController {
   }
 }
 
-module.exports = new LoginController();
+module.exports = new UserController();
