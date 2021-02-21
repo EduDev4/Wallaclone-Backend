@@ -22,7 +22,16 @@ const userSchema = mongoose.Schema(
       select: false,
       required: [true, 'Please provide a password'],
     },
-
+    confirmed: {
+      type: Boolean,
+      default: false,
+    },
+    token: String,
+    expires: {
+      type: Number,
+      //default: Date.now(), //0 seg para test de tokens expirados
+      default: Date.now() + 10800000, //3 hours
+    },
     // TODO: próxima reunión comentar/explicar esto de los favoritos
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Advert' }],
     active: {
