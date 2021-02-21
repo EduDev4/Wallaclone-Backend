@@ -9,7 +9,13 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+  origin: 'http://localhost:3001',
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 // db connection
 require('./lib/connectMongoose');
