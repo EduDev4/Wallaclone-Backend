@@ -34,10 +34,6 @@ const userSchema = mongoose.Schema(
     },
     // TODO: próxima reunión comentar/explicar esto de los favoritos
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Advert' }],
-    active: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     timestamps: true,
