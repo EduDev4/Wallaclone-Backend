@@ -22,6 +22,10 @@ const userSchema = mongoose.Schema(
       select: false,
       required: [true, 'Please provide a password'],
     },
+    hash: {
+      type: String,
+      default: '',
+    },
     confirmed: {
       type: Boolean,
       default: false,

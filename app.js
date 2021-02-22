@@ -51,6 +51,7 @@ app.get('/apiv1/users/confirm/:token', userController.signupConfirmation);
 app.use('/apiv1/adverts', require('./routes/apiv1/adverts'));
 //ruta provisional para comprobar que funciona la protección de ruta con token
 app.use('/apiv1/users', jwtAuth(), require('./routes/apiv1/users'));
+app.use('/apiv1/forgotPass', require('./routes/apiv1/users'));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
