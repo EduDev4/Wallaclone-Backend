@@ -1,16 +1,10 @@
 const express = require('express');
 
-const router = express.Router();
-const Advert = require('../../models/Advert');
+// import functions from controller
+const { getAllAdverts } = require('../../controllers/advertController');
 
-/* GET /adverts */
-router.get('/', async (req, res, next) => {
-  try {
-    const adverts = await Advert.find();
-    res.json(adverts);
-  } catch (error) {
-    next(error);
-  }
-});
+const router = express.Router();
+
+router.route('/').get(getAllAdverts);
 
 module.exports = router;

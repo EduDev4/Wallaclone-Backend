@@ -49,6 +49,23 @@ const advertSchema = mongoose.Schema(
   { timestamps: true },
 );
 
+advertSchema.statics.listAdverts = function (
+  filterObj,
+  sortBy,
+  fields,
+  limit,
+  skip,
+) {
+  const query = this.find(filterObj)
+    .collation({ locale: 'es' })
+    .sort(sortBy)
+    .select(fields)
+    .limit(limit)
+    .skip(skip);
+
+  return query;
+};
+
 const Advert = mongoose.model('Advert', advertSchema);
 
 module.exports = Advert;
