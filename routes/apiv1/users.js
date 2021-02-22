@@ -3,10 +3,15 @@ const bodyParser = require('body-parser');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 
+const cors = require('cors');
+
 const router = express.Router();
 const User = require('../../models/User');
-const cors = require('cors');
-const { sendResetPasswordEmail, sendConfirmationEmail } = require('./mailer');
+
+const {
+  sendResetPasswordEmail,
+  sendConfirmationEmail,
+} = require('../../controllers/mailerController');
 
 const corsOptions = {
   origin: 'http://localhost:3000',
