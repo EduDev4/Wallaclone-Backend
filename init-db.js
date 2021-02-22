@@ -30,16 +30,19 @@ async function initUsers() {
       username: 'user1',
       email: 'wallaclone123@gmail.com',
       passwd: await User.hashPassword('123456'),
+      confirmed: true,
     },
     {
       username: 'user2',
       email: 'user2@example.com',
       passwd: await User.hashPassword('123456'),
+      confirmed: true,
     },
     {
       username: 'user3',
       email: 'user3@example.com',
       passwd: await User.hashPassword('123456'),
+      confirmed: true,
     },
   ]);
 
@@ -70,7 +73,7 @@ conn.once('open', async () => {
     }
 
     await initUsers();
-    await initAdverts();
+    // await initAdverts();
 
     conn.close();
   } catch (error) {

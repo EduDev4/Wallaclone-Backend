@@ -22,7 +22,7 @@ const advertSchema = mongoose.Schema(
     },
     image: {
       type: String,
-      required: [true, 'An advert must have an image'],
+      default: '/img/adverts/noAdImage.jpg',
     },
     tags: {
       type: [String],
