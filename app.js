@@ -8,9 +8,13 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 
 const app = express();
+const originUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.DOMAIN
+    : process.env.DOMAIN_PROD;
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: originUrl,
   optionsSuccessStatus: 200,
 };
 
