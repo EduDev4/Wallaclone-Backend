@@ -7,7 +7,8 @@
     "start": "node ./bin/www",
     "dev": "cross-env NODE_ENV=development DEBUG=wallaclonebackend:* nodemon ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "init-db": "node ./init-db.js"
+    "init-db-local": "cross-env NODE_ENV=development node ./init-db.js",
+    "init-db-prod": "cross-env NODE_ENV=production node ./init-db.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
