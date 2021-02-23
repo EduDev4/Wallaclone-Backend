@@ -22,7 +22,7 @@ class UserController {
     try {
       const { username } = req.body;
       const { passwd } = req.body;
-      console.log(req.body);
+      // console.log(req.body);
 
       const user = await User.findOne({
         username: username,
@@ -206,6 +206,59 @@ class UserController {
       return res.json({ message: 'Password has been resseted' });
     } catch (err) {
       return next(createError(422, err.message));
+    }
+  }
+
+  /**
+   * PATCH /userData/:username
+   */
+  async updateUserData(req, res, next) {
+    const { newUsername, newUserEmail, newPasswd } = req.body;
+    const currentUsername = req.params.username;
+
+    try {
+      const currentUser = await User.findOne({
+        username: currentUsername,
+      });
+      const newData = {};
+
+      if (newUsername) {
+        if (await User.find({ username: newUsername })) {
+          return next(createError(422, 'This username is already in use'));
+        }
+        newData.username = newUsername;
+      }
+
+      if (newUserEmail) {
+        if (await User.find({ email: newUserEmail })) {
+          return next(createError(422, 'This email is already in use'));
+        }
+        newData.email = newUserEmail;
+      }
+
+      if (newPasswd) {
+        newData.passwd = await User.hashPassword(newPasswd);
+      }
+
+      const newUserData = await User.findOneAndUpdate(
+        { _id: currentUser._id },
+        newData,
+        {
+          new: true,
+          useFindAndModify: false,
+        },
+      );
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          username: newUserData.username,
+          userEmail: newUserData.email,
+        },
+      });
+    } catch (error) {
+      return next(createError(404, error.message));
     }
   }
 }

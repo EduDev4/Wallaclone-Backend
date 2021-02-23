@@ -30,4 +30,7 @@ router.put('/forgotPass', userController.forgotPass);
 /* POST /users/forgotPass/confirmation, User forgot pass confirm */
 router.post('/forgotPass/confirmation', userController.forgotPassConfirm);
 
+/* PATCH /users/userData/:username, Edit user data */
+router.patch('/userData/:username', userController.updateUserData);
+
 module.exports = router;
