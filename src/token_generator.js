@@ -27,7 +27,7 @@ function tokenGenerator(identity = 0) {
   );
   
   // Assign the provided identity or generate a new one
-  token.identity = "vcanela" || nameGenerator();
+  token.identity = identity || nameGenerator();
 
   // Grant the access token Twilio Video capabilities
   const videoGrant = new VideoGrant();
