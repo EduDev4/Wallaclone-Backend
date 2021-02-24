@@ -36,8 +36,8 @@ const getAllAdverts = async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       requestedAt: req.requestTime,
-      results: adverts.length,
       data: {
+        results: adverts.length,
         adverts: adverts,
       },
     });

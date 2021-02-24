@@ -78,15 +78,18 @@ class UserController {
           if (user) {
             //Si el usuario esta confirmado o pendiente de confirmar
             if (user.confirmed || Date.now() < user.expires)
-              return res.status(400).json({
-                auth: false,
-                message: 'email or username already exits',
-              });
+              return next(createError(400, 'email or username already exits'));
+            // return res.status(400).json({
+            //   auth: false,
+            //   message: 'email or username already exits',
+            // });
+
             //Sino, Borramos el usuario cuyo token expiró y no está confirmado
             try {
               user.remove();
             } catch (error) {
               console.log(error);
+              return next(createError(400, error.message));
             }
           }
 
@@ -106,9 +109,17 @@ class UserController {
             }
             // TODO enviar email al usuario con el enlace para confirmar:
             // TODO ej: http://localhost:3000/apiv1/users/confirm/03a1ad862e706f3aabc3cf234a02e1cd
+            // res.status(200).json({
+            //   succes: true,
+            //   user: doc,
+            // });
+            // COMPLETE: Respuesta unificada del user signup
             res.status(200).json({
-              succes: true,
-              user: doc,
+              status: 'success',
+              requestedAt: req.requestTime,
+              data: {
+                user: doc,
+              },
             });
           });
         },
@@ -127,24 +138,18 @@ class UserController {
 
     try {
       if (!token) {
-        return res.status(404).json({
-          succes: false,
-          message: 'Token missing',
-        });
+        return next(createError(401, 'Token missing!'));
       }
 
       const user = await User.findOne({ token: token });
 
       if (!user) {
-        return res.status(404).json({
-          succes: false,
-          message: 'The token provided is not valid',
-        });
+        return next(createError(401, 'The token provided is not valid!'));
       }
 
       if (Date.now() > user.expires) {
         await user.remove();
-        return res.status(200).json({ error: 'token expired' });
+        return next(createError(401, 'Token expired!'));
       }
 
       user.confirmed = true;
@@ -152,13 +157,21 @@ class UserController {
       user.expires = '';
       await user.save();
 
-      return res
-        .status(200)
-        .json({ succes: true, message: 'User email confirmed' });
+      // return res
+      //   .status(200)
+      //   .json({ succes: true, message: 'User email confirmed' });
+      // COMPLETE: Respuesta unificada del user signup confirmation
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          message: 'User email confirmed',
+        },
+      });
     } catch (err) {
       console.log(err);
       // COMPLETE usar error handler
-      return next(createError(404, err.message));
+      return next(createError(400, err.message));
     }
   }
 
@@ -170,7 +183,7 @@ class UserController {
     try {
       const user = await User.find({ email });
       if (!user) {
-        return res.status(422).send("User email doesn't exist!");
+        return next(createError(422, "User email doesn't exist!"));
       }
       const hash = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
       const obj = {
@@ -179,8 +192,13 @@ class UserController {
       const newUser = _.extend(...user, obj);
       await newUser.save();
       await sendResetPasswordEmail({ toUser: email }, hash);
-      return res.json({
-        message: 'Please check your email in order to reset the password!',
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          message: 'Please check your email in order to reset the password!',
+        },
       });
     } catch (err) {
       return next(createError(422, err.message));
@@ -203,7 +221,14 @@ class UserController {
       const newUser = _.extend(...user, obj);
       await newUser.save();
       await sendConfirmationEmail({ toUser: email });
-      return res.json({ message: 'Password has been resseted' });
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          message: 'Password has been resseted',
+        },
+      });
     } catch (err) {
       return next(createError(422, err.message));
     }
