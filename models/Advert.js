@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { tagsObjModel } = require('../utils/config');
 
 const advertSchema = mongoose.Schema(
   {
@@ -27,10 +28,7 @@ const advertSchema = mongoose.Schema(
     tags: {
       type: [String],
       index: true,
-      enum: {
-        values: ['mobile', 'work', 'lifestyle', 'motor'],
-        message: 'Tags can be: mobile, work, lifestyle, motor',
-      },
+      enum: tagsObjModel,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

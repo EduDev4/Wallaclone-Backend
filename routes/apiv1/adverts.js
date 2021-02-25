@@ -11,6 +11,7 @@ const {
   createAdvert,
   updateAdvertById,
   deleteAdvertById,
+  getAllExistTags,
   getAdvertById,
 } = require('../../controllers/advertController');
 
@@ -24,6 +25,7 @@ router
   .post(jwtAuth(), uploadAdvImg, createAdvert);
 
 /* GET /tags */
+router.route('/tags').get(getAllExistTags);
 
 /* GET /:id, Get an advert detail */
 /* PUT /:id, Update an advert */
@@ -33,9 +35,5 @@ router
   .get(getAdvertById)
   .put(jwtAuth(), uploadAdvImg, updateAdvertById)
   .delete(jwtAuth(), deleteAdvertById);
-
-module.exports = router;
-
-router.route('/').get(getAllAdverts);
 
 module.exports = router;

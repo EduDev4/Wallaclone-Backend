@@ -8,9 +8,9 @@ const User = require('../models/User');
 const {
   sendResetPasswordEmail,
   sendConfirmationEmail,
+  sendUnsubscribeEmail,
 } = require('./mailerController');
 
-// TODO: Borrado de usuario
 // TODO: Poner o quitar favoritos
 // TODO: Actualización de datos de usuario
 
@@ -228,6 +228,27 @@ class UserController {
         data: {
           message: 'Password has been resseted',
         },
+      });
+    } catch (err) {
+      return next(createError(422, err.message));
+    }
+  }
+
+  /**
+   * DELETE /   (Delete user)
+   */
+  async deleteUser(req, res, next) {
+    try {
+      const user = await User.findOne({ _id: req.userId });
+
+      await User.deleteOne({ _id: req.userId });
+
+      //TODO: Enviar email de confirmación de baja
+      await sendUnsubscribeEmail(user.email);
+
+      res.status(204).json({
+        status: 'success',
+        data: null,
       });
     } catch (err) {
       return next(createError(422, err.message));

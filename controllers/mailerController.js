@@ -50,3 +50,18 @@ exports.sendConfirmationEmail = ({ toUser }) => {
   console.log(message);
   return sendEmail(message);
 };
+
+exports.sendUnsubscribeEmail = email => {
+  const message = {
+    from: process.env.GOOGLE_USER,
+    to: email,
+    subject: 'Your Wallaclone - GoodBye',
+    html: `
+        <h3> Hello </h3>
+        <p>Hello, we're sorry you unsubscribed from the service. We hope to see you again</p>
+        <p>Cheers</p>
+        <p>Your Wallaclone Team</p>
+      `,
+  };
+  return sendEmail(message);
+};
