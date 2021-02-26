@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 // const cors = require('cors');
 
 const router = express.Router();
+const jwtAuth = require('../../lib/jwtAuth');
 
 const userController = require('../../controllers/userController');
 
@@ -30,7 +31,7 @@ router.put('/forgotPass', userController.forgotPass);
 /* POST /users/forgotPass/confirmation, User forgot pass confirm */
 router.post('/forgotPass/confirmation', userController.forgotPassConfirm);
 
-/* PATCH /users/userData/:username, Edit user data */
-router.patch('/userData/:username', userController.updateUserData);
+/* PATCH /users/editUser/:username, Edit user data */
+router.patch('/editUser/:username', jwtAuth(), userController.updateUserData);
 
 module.exports = router;

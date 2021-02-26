@@ -210,7 +210,7 @@ class UserController {
   }
 
   /**
-   * PATCH /userData/:username
+   * PATCH /editUser/:username
    */
   async updateUserData(req, res, next) {
     const { newUsername, newUserEmail, newPasswd } = req.body;
@@ -223,14 +223,14 @@ class UserController {
       const newData = {};
 
       if (newUsername) {
-        if (await User.find({ username: newUsername })) {
+        if (await (await User.find({ username: newUsername })).length) {
           return next(createError(422, 'This username is already in use'));
         }
         newData.username = newUsername;
       }
 
       if (newUserEmail) {
-        if (await User.find({ email: newUserEmail })) {
+        if (await (await User.find({ email: newUserEmail })).length) {
           return next(createError(422, 'This email is already in use'));
         }
         newData.email = newUserEmail;
