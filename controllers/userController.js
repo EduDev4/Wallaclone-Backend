@@ -22,7 +22,7 @@ class UserController {
     try {
       const { username } = req.body;
       const { passwd } = req.body;
-      console.log(req.body);
+      // console.log(req.body);
 
       const user = await User.findOne({
         username: username,

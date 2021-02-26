@@ -1,15 +1,17 @@
 {
-  "EXAMPLE": {
-    "TEXT": "Texto",
-    "HELLO": "Hola %s, soy de %s",
-    "NAME_PHRASE": "Mi nombre es {{name}}",
-    "MOUSE": {
-      "one": "%s Mouse",
-      "other": "%s Mice"
-    }
-  },
-  "Invalid credentials!": "Credenciales no válidas!",
-  "No token provided": "Token no proporcionado",
-  "Invalid token!": "Token no válido!",
-  "Advert validation failed: name: An advert must have a name": "Validación fallida: El anuncio debe tener un nombre"
+	"EXAMPLE": {
+		"TEXT": "Texto",
+		"HELLO": "Hola %s, soy de %s",
+		"NAME_PHRASE": "Mi nombre es {{name}}",
+		"MOUSE": {
+			"one": "%s Mouse",
+			"other": "%s Mice"
+		}
+	},
+	"Invalid credentials!": "Credenciales no válidas!",
+	"No token provided": "Token no proporcionado",
+	"Invalid token!": "Token no válido!",
+	"Advert validation failed: name: An advert must have a name": "Validación fallida: El anuncio debe tener un nombre",
+	"Not Found": "Not Found",
+	"Cannot destructure property '_id' of '(intermediate value)' as it is null.": "Cannot destructure property '_id' of '(intermediate value)' as it is null."
 }
