@@ -2,6 +2,14 @@
   "name": "wallaclonebackend",
   "version": "1.0.0",
   "description": "Wallaclone Backend",
+  "apidoc": {
+    "name": "Wallaclone API documentation",
+    "version": "1.0.0",
+    "description": "API for sales service, managing ads and users (under construction)",
+    "template": {
+      "forceLanguage": "en"
+    }
+  },
   "main": "app.js",
   "scripts": {
     "start": "node ./bin/www",

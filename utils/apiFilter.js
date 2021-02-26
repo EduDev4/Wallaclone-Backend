@@ -3,7 +3,7 @@ exports.getFilterObj = function (queryString) {
   const filterObj = { ...queryString };
 
   // Delete properties that not use for filter
-  const excludedFields = ['start', 'sort', 'limit', 'fields'];
+  const excludedFields = ['start', 'sort', 'limit', 'fields', 'username'];
   excludedFields.forEach(el => delete filterObj[el]);
 
   // Apply price range filter if exists, supose the string is
