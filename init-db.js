@@ -73,7 +73,7 @@ conn.once('open', async () => {
     }
 
     await initUsers();
-    // await initAdverts();
+    await initAdverts();
 
     conn.close();
   } catch (error) {

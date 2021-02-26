@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const router = express.Router();
+const jwtAuth = require('../../lib/jwtAuth');
 
 const jwtAuth = require('../../lib/jwtAuth');
 const userController = require('../../controllers/userController');
@@ -33,5 +34,8 @@ router.put('/forgotPass', userController.forgotPass);
 
 /* POST /users/forgotPass/confirmation, User forgot pass confirm */
 router.post('/forgotPass/confirmation', userController.forgotPassConfirm);
+
+/* PATCH /users/editUser/:username, Edit user data */
+router.patch('/editUser/:username', jwtAuth(), userController.updateUserData);
 
 module.exports = router;

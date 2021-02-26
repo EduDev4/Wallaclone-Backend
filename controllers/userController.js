@@ -254,6 +254,59 @@ class UserController {
       return next(createError(422, err.message));
     }
   }
+
+  /**
+   * PATCH /editUser/:username
+   */
+  async updateUserData(req, res, next) {
+    const { newUsername, newUserEmail, newPasswd } = req.body;
+    const currentUsername = req.params.username;
+
+    try {
+      const currentUser = await User.findOne({
+        username: currentUsername,
+      });
+      const newData = {};
+
+      if (newUsername) {
+        if (await (await User.find({ username: newUsername })).length) {
+          return next(createError(422, 'This username is already in use'));
+        }
+        newData.username = newUsername;
+      }
+
+      if (newUserEmail) {
+        if (await (await User.find({ email: newUserEmail })).length) {
+          return next(createError(422, 'This email is already in use'));
+        }
+        newData.email = newUserEmail;
+      }
+
+      if (newPasswd) {
+        newData.passwd = await User.hashPassword(newPasswd);
+      }
+
+      const newUserData = await User.findOneAndUpdate(
+        { _id: currentUser._id },
+        newData,
+        {
+          new: true,
+          useFindAndModify: false,
+        },
+      );
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          username: newUserData.username,
+          userEmail: newUserData.email,
+        },
+      });
+    } catch (error) {
+      return next(createError(404, error.message));
+    }
+  }
 }
 
 module.exports = new UserController();
