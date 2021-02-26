@@ -33,6 +33,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// i18n module, middleware for internationalization
+const i18n = require('./utils/i18nSetup');
+
+app.use(i18n.init);
+
+// Middleware for catch request date
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
 /**
  * Website routes, API info and Documentation
  */
@@ -60,7 +71,7 @@ app.use((err, req, res, next) => {
     res.status(err.status).json({
       status: 'fail',
       code: err.status,
-      message: err.message,
+      message: req.__(err.message),
     });
     return;
   }

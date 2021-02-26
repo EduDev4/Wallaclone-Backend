@@ -7,5 +7,9 @@
       "one": "%s Mouse",
       "other": "%s Mice"
     }
-  }
+  },
+  "Invalid credentials!": "Invalid credentials!",
+  "No token provided": "No token provided",
+  "Invalid token!": "Invalid token!",
+  "Advert validation failed: name: An advert must have a name": "Validation failed: An advert must have a name"
 }
