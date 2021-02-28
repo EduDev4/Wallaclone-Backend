@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 const jwtAuth = require('../../lib/jwtAuth');
 
-const jwtAuth = require('../../lib/jwtAuth');
 const userController = require('../../controllers/userController');
 const advertController = require('../../controllers/advertController');
 
