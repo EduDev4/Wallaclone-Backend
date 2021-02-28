@@ -63,4 +63,4 @@ typings/
 # Adverts images
 /public/img/adverts
 
-/locales
+locales/
