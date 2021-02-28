@@ -1,15 +1,18 @@
 {
-  "EXAMPLE": {
-    "TEXT": "Text",
-    "HELLO": "Hello %s, i'm from %s",
-    "NAME_PHRASE": "My name is {{name}}",
-    "MOUSE": {
-      "one": "%s Mouse",
-      "other": "%s Mice"
-    }
-  },
-  "Invalid credentials!": "Invalid credentials!",
-  "No token provided": "No token provided",
-  "Invalid token!": "Invalid token!",
-  "Advert validation failed: name: An advert must have a name": "Validation failed: An advert must have a name"
+	"EXAMPLE": {
+		"TEXT": "Text",
+		"HELLO": "Hello %s, i'm from %s",
+		"NAME_PHRASE": "My name is {{name}}",
+		"MOUSE": {
+			"one": "%s Mouse",
+			"other": "%s Mice"
+		}
+	},
+	"Invalid credentials!": "Invalid credentials!",
+	"No token provided": "No token provided",
+	"Invalid token!": "Invalid token!",
+	"Advert validation failed: name: An advert must have a name": "Validation failed: An advert must have a name",
+	"Not Found": "Not Found",
+	"Cannot destructure property '_id' of '(intermediate value)' as it is null.": "Cannot destructure property '_id' of '(intermediate value)' as it is null.",
+	"Advert validation failed: tags.0: Tags can be: 'motor', 'fashion', 'electronics', 'toys', 'sports', 'work', 'services', 'games', 'pc', 'mobile', 'other'": "Advert validation failed: tags.0: Tags can be: 'motor', 'fashion', 'electronics', 'toys', 'sports', 'work', 'services', 'games', 'pc', 'mobile', 'other'"
 }
