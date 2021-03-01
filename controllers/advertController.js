@@ -295,20 +295,14 @@ const getAdvertById = async (req, res, next) => {
 };
 
 /** Get all tags availables */
-const getAllExistTags = async (req, res, next) => {
-  try {
-    const existTags = await Advert.distinct('tags');
-
-    res.status(200).json({
-      status: 'success',
-      requestedAt: req.requestTime,
-      data: {
-        tags: existTags,
-      },
-    });
-  } catch (err) {
-    next(createError(404, err.message));
-  }
+const getAllExistTags = (req, res, next) => {
+  res.status(200).json({
+    status: 'success',
+    requestedAt: req.requestTime,
+    data: {
+      tags: Advert.allowedTags(),
+    },
+  });
 };
 
 /** Delete all user adverts */
