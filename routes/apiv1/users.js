@@ -34,6 +34,11 @@ router.put('/forgotPass', userController.forgotPass);
 /* POST /users/forgotPass/confirmation, User forgot pass confirm */
 router.post('/forgotPass/confirmation', userController.forgotPassConfirm);
 
+/* POST /users/favs/:adId, Set or Delete favorite */
+/* GET /users/favs, Get all favorites adverts from user */
+router.post('/favs/:adId', jwtAuth(), userController.setUnsetFav);
+router.get('/favs', jwtAuth(), userController.getUserFavs);
+
 /* PATCH /users/editUser/:username, Edit user data */
 router.patch('/editUser/:username', jwtAuth(), userController.updateUserData);
 

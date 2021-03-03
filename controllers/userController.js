@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const _ = require('lodash');
 const createError = require('http-errors');
 const User = require('../models/User');
+const Advert = require('../models/Advert');
 
 const {
   sendResetPasswordEmail,
@@ -50,6 +51,7 @@ class UserController {
               tokenJWT: tokenJWT,
               username: username,
               userEmail: user.email,
+              _id: user._id,
             },
           });
         },
@@ -305,6 +307,64 @@ class UserController {
       });
     } catch (error) {
       return next(createError(404, error.message));
+    }
+  }
+
+  /**
+   * POST /favs/:adId   (Set or Unset favorite)
+   */
+  async setUnsetFav(req, res, next) {
+    try {
+      const advert = await Advert.findById(req.params.adId);
+      let message;
+      User.findOne({ _id: req.userId })
+        .then(user => {
+          if (user.favorites.includes(req.params.adId)) {
+            user.favorites = user.favorites.filter(
+              id => id.toString() !== req.params.adId,
+            );
+            advert.isFavBy.set(req.userId, false);
+            message = 'Fav deleted!';
+          } else {
+            user.favorites.push(req.params.adId);
+            advert.isFavBy.set(req.userId, true);
+            message = 'Fav created!';
+          }
+
+          advert.save();
+          user.save();
+          res.status(200).json({
+            status: 'success',
+            data: {
+              message: req.__(message),
+            },
+          });
+        })
+        .catch(err => next(createError(404, err.message)));
+    } catch (err) {
+      return next(createError(404, err.message));
+    }
+  }
+
+  /**
+   * GET /favs   (Get all user favorites)
+   */
+  async getUserFavs(req, res, next) {
+    try {
+      const { favorites } = await User.findOne({ _id: req.userId });
+
+      const adverts = await Advert.find({ _id: { $in: favorites } });
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          results: adverts.length,
+          adverts: adverts,
+        },
+      });
+    } catch (err) {
+      return next(createError(404, err.message));
     }
   }
 }
