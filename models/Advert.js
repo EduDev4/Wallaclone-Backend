@@ -34,6 +34,11 @@ const advertSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    isFavBy: {
+      type: Map,
+      of: Boolean,
+      default: {},
+    },
     state: {
       type: String,
       default: 'Available',
