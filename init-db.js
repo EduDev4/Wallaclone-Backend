@@ -44,6 +44,12 @@ async function initUsers() {
       passwd: await User.hashPassword('123456'),
       confirmed: true,
     },
+    {
+      username: process.env.MYUSERNAME || 'user4',
+      email: process.env.MYEMAIL || 'user4@test.com',
+      passwd: await User.hashPassword(process.env.MYPASSWORD || '123456'),
+      confirmed: true,
+    },
   ]);
 
   console.log(`Created ${result.length} users.`);
@@ -73,7 +79,7 @@ conn.once('open', async () => {
     }
 
     await initUsers();
-    await initAdverts();
+    //await initAdverts();
 
     conn.close();
   } catch (error) {

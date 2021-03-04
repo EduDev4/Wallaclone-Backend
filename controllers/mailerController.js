@@ -25,3 +25,14 @@ exports.sendConfirmationEmail = ({ toUser }) => {
   //pass the data object to send the email
   return sender.sendEmail(message);
 };
+
+exports.sendUnsubscribeEmail = ({ toUser }) => {
+  const message = {
+    //name of the email template that we will be using
+    templateName: 'user_deletion',
+    //sender's and receiver's email
+    receiver: toUser,
+  };
+  //pass the data object to send the email
+  return sender.sendEmail(message);
+};
