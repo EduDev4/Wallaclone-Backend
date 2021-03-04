@@ -39,6 +39,8 @@ router.post('/forgotPass/confirmation', userController.forgotPassConfirm);
 router.post('/favs/:adId', jwtAuth(), userController.setUnsetFav);
 router.get('/favs', jwtAuth(), userController.getUserFavs);
 
+router.post('/reservation/:adId', jwtAuth(), userController.setUnsetReserved);
+
 /* PATCH /users/editUser/:username, Edit user data */
 router.patch('/editUser/:username', jwtAuth(), userController.updateUserData);
 
