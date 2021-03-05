@@ -1,8 +1,6 @@
 const sgMail = require('@sendgrid/mail');
 
-sgMail.setApiKey(
-  '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',
-);
+sgMail.setApiKey(process.env.SG_KEY);
 
 const templates = {
   password_reset_confirm: 'd-735e60f63c424222b7a98f4c02b8924d',
