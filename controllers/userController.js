@@ -367,6 +367,25 @@ class UserController {
       return next(createError(404, err.message));
     }
   }
+
+  /**
+   * GET /:id (Get username from userId)
+   */
+  async getUserNameFromId(req, res, next) {
+    try {
+      const { username } = await User.findById(req.params.id);
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          username,
+        },
+      });
+    } catch (error) {
+      return next(createError(404, error.message));
+    }
+  }
 }
 
 module.exports = new UserController();
