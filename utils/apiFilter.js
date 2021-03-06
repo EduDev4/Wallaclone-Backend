@@ -53,5 +53,10 @@ exports.getFilterObj = function (queryString) {
     }
   }
 
+  // If there is nosold in queryString set to true (&nosold=true)
+  if (filterObj.nosold) {
+    delete filterObj.nosold;
+    filterObj.state = { $not: { $regex: 'Sold' } };
+  }
   return filterObj;
 };

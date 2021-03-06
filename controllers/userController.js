@@ -12,7 +12,7 @@ const {
   sendUnsubscribeEmail,
 } = require('./mailerController');
 
-// TODO: Poner o quitar favoritos
+// COMPLETE: Poner o quitar favoritos
 // TODO: Actualización de datos de usuario
 
 class UserController {
@@ -241,12 +241,14 @@ class UserController {
    */
   async deleteUser(req, res, next) {
     try {
-      const user = await User.findOne({ _id: req.userId });
+      const { email } = await User.findOne({ _id: req.userId });
+
+      if (!email) return next(createError(404, 'User not found!'));
 
       await User.deleteOne({ _id: req.userId });
 
-      //TODO: Enviar email de confirmación de baja
-      await sendUnsubscribeEmail(user.email);
+      //COMPLETE: Enviar email de confirmación de baja
+      await sendUnsubscribeEmail({ toUser: email });
 
       res.status(204).json({
         status: 'success',
@@ -384,6 +386,46 @@ class UserController {
       });
     } catch (error) {
       return next(createError(404, error.message));
+    }
+  }
+
+  /**
+   * POST /reservation/:adId   (Set or Unset reserved)
+   */
+  async setUnsetReserved(req, res, next) {
+    try {
+      const advert = await Advert.findById(req.params.adId);
+      let message;
+
+      if (!advert) {
+        return next(createError(404, 'Advert not found!'));
+      }
+
+      if (advert.createdBy.toString() !== req.userId) {
+        return next(createError(401, 'Unauthorized Request!!'));
+      }
+
+      if (advert.state === 'Available') {
+        advert.state = 'Reserved';
+        message = 'Advert reserved!';
+        // TODO: Enviar notificación a usuarios como reservado
+      } else {
+        advert.state = 'Available';
+        message = 'Advert available!';
+        // TODO: Enviar notificación a usuarios como disponible
+      }
+
+      advert.save();
+      // console.log(advert);
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          message: req.__(message),
+        },
+      });
+    } catch (err) {
+      return next(createError(404, err.message));
     }
   }
 }
