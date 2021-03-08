@@ -8,16 +8,20 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 
 const app = express();
-const originUrl =
-  process.env.NODE_ENV === 'development'
-    ? process.env.DOMAIN
-    : process.env.DOMAIN_PROD;
 
+const whitelist = [process.env.DOMAIN, process.env.DOMAIN_PROD];
 const corsOptions = {
-  origin: originUrl,
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200,
 };
 
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 
 // db connection
