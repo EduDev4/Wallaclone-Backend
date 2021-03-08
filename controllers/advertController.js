@@ -112,17 +112,13 @@ const createAdvert = async (req, res, next) => {
   try {
     if (req.file) {
       req.body.image = req.file.path.replace('public', '');
+      createThumb(req.file.filename, req.file.path);
     }
 
     // Add user id to new advert
     req.body.createdBy = req.userId;
 
     const newAdvert = await Advert.create(req.body);
-
-    // Before response, send image path to thumbnail service
-    if (req.file) {
-      createThumb(req.file.filename, req.file.path);
-    }
 
     res.status(201).json({
       status: 'success',
@@ -209,7 +205,7 @@ const updateAdvertById = async (req, res, next) => {
 
     // If there is a new image, delete the previous one
     if (req.file) {
-      fs.unlinkSync(`public${adv.image}`);
+      fs.unlinkSync(`public/${adv.image}`);
 
       // Send previous image name to thumbnail service for delete
       deleteThumb(adv.image);
@@ -218,7 +214,7 @@ const updateAdvertById = async (req, res, next) => {
       createThumb(req.file.filename, req.file.path);
 
       // Update parameter with image name
-      req.body.image = req.file.path.replace('public/', '');
+      req.body.image = req.file.path.replace('public', '');
     }
 
     // Update the advert
