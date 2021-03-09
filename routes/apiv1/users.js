@@ -38,6 +38,10 @@ router.post('/forgotPass/confirmation', userController.forgotPassConfirm);
 /* GET /users/favs, Get all favorites adverts from user */
 router.post('/favs/:adId', jwtAuth(), userController.setUnsetFav);
 router.get('/favs', jwtAuth(), userController.getUserFavs);
+/* POST /users/sold/:adId, Set or Delete sold */
+/* GET /users/sold, Get all sold adverts from user */
+router.post('/sold/:adId', jwtAuth(), userController.setUnsetSold);
+router.get('/sold', jwtAuth(), userController.getUserSold);
 
 router.post('/reservation/:adId', jwtAuth(), userController.setUnsetReserved);
 

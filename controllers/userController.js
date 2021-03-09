@@ -370,6 +370,61 @@ class UserController {
     }
   }
 
+  async setUnsetSold(req, res, next) {
+    try {
+      const advert = await Advert.findById(req.params.adId);
+      let message;
+      User.findOne({ _id: req.userId })
+        .then(user => {
+          if (user.sold.includes(req.params.adId)) {
+            user.sold = user.sold.filter(
+              id => id.toString() !== req.params.adId,
+            );
+            advert.isSoldBy.set(req.userId, false);
+            message = 'Not Sold!';
+          } else {
+            user.sold.push(req.params.adId);
+            advert.isSoldBy.set(req.userId, true);
+            message = 'Sold!';
+          }
+
+          advert.save();
+          user.save();
+          res.status(200).json({
+            status: 'success',
+            data: {
+              message: req.__(message),
+            },
+          });
+        })
+        .catch(err => next(createError(404, err.message)));
+    } catch (err) {
+      return next(createError(404, err.message));
+    }
+  }
+
+  /**
+   * GET /sold   (Get all user sold ones)
+   */
+  async getUserSold(req, res, next) {
+    try {
+      const { sold } = await User.findOne({ _id: req.userId });
+
+      const adverts = await Advert.find({ _id: { $in: sold } });
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          results: adverts.length,
+          adverts: adverts,
+        },
+      });
+    } catch (err) {
+      return next(createError(404, err.message));
+    }
+  }
+
   /**
    * GET /:id (Get username from userId)
    */

@@ -39,6 +39,11 @@ const advertSchema = mongoose.Schema(
       of: Boolean,
       default: {},
     },
+    isSoldBy: {
+      type: Map,
+      of: Boolean,
+      default: {},
+    },
     state: {
       type: String,
       default: 'Available',
