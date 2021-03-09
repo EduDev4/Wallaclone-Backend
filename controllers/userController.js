@@ -374,30 +374,34 @@ class UserController {
     try {
       const advert = await Advert.findById(req.params.adId);
       let message;
-      User.findOne({ _id: req.userId })
-        .then(user => {
-          if (user.sold.includes(req.params.adId)) {
-            user.sold = user.sold.filter(
-              id => id.toString() !== req.params.adId,
-            );
-            advert.isSoldBy.set(req.userId, false);
-            message = 'Not Sold!';
-          } else {
-            user.sold.push(req.params.adId);
-            advert.isSoldBy.set(req.userId, true);
-            message = 'Sold!';
-          }
 
-          advert.save();
-          user.save();
-          res.status(200).json({
-            status: 'success',
-            data: {
-              message: req.__(message),
-            },
-          });
-        })
-        .catch(err => next(createError(404, err.message)));
+      if (!advert) {
+        return next(createError(404, 'Advert not found!'));
+      }
+
+      if (advert.createdBy.toString() !== req.userId) {
+        return next(createError(401, 'Unauthorized Request!!'));
+      }
+
+      if (advert.state === 'Available' || advert.state === 'Reserved') {
+        advert.state = 'Sold';
+        message = 'Advert sold!';
+        // TODO: Enviar notificación a usuarios como vendido
+      } else {
+        advert.state = 'Available';
+        message = 'Advert available!';
+        // TODO: Enviar notificación a usuarios como disponible
+      }
+
+      advert.save();
+      // console.log(advert);
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          message: req.__(message),
+        },
+      });
     } catch (err) {
       return next(createError(404, err.message));
     }
@@ -458,6 +462,10 @@ class UserController {
 
       if (advert.createdBy.toString() !== req.userId) {
         return next(createError(401, 'Unauthorized Request!!'));
+      }
+
+      if (advert.state === 'Sold') {
+        return next(createError(400, 'Advert is sold, uncheck first!'));
       }
 
       if (advert.state === 'Available') {
