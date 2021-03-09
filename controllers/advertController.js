@@ -208,7 +208,7 @@ const updateAdvertById = async (req, res, next) => {
       fs.unlinkSync(`public/${adv.image}`);
 
       // Send previous image name to thumbnail service for delete
-      deleteThumb(adv.image);
+      deleteThumb(adv.image.split('/')[adv.image.split('/').length - 1]);
 
       // Send new image name to thumbnail service for create
       createThumb(req.file.filename, req.file.path);
@@ -256,7 +256,8 @@ const deleteAdvertById = async (req, res, next) => {
       fs.unlinkSync(`public${advert.image}`);
 
       // Send image name to deleting thumbnail service
-      deleteThumb(advert.image);
+      // deleteThumb(advert.image);
+      deleteThumb(advert.image.split('/')[advert.image.split('/').length - 1]);
     }
 
     // Second, delete advert from DB
