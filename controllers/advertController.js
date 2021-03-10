@@ -116,7 +116,6 @@ const createAdvert = async (req, res, next) => {
 
     // Add user id to new advert
     req.body.createdBy = req.userId;
-
     const newAdvert = await Advert.create(req.body).pop;
 
     res.status(201).json({
@@ -277,6 +276,7 @@ const getAdvertById = async (req, res, next) => {
     const advert = await Advert.findById(req.params.id);
 
     if (!advert) return next(createError(404, req._('Advert not found!')));
+    console.log(advert);
 
     res.status(200).json({
       status: 'success',
