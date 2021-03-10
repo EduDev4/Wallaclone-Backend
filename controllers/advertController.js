@@ -27,7 +27,7 @@ const getAllAdverts = async (req, res, next) => {
       : '-__v';
 
     const start = req.query.start * 1 || 1;
-    const limit = req.query.limit * 1 || 10;
+    const limit = req.query.limit * 1 || 12;
     const skip = (start - 1) * limit;
 
     const adverts = await Advert.listAdverts(
