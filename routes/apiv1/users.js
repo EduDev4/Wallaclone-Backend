@@ -48,7 +48,4 @@ router.post('/reservation/:adId', jwtAuth(), userController.setUnsetReserved);
 /* PATCH /users/editUser/:username, Edit user data */
 router.patch('/editUser/:username', jwtAuth(), userController.updateUserData);
 
-/* GET /:id, Get username from userId */
-router.get('/:id', userController.getUserNameFromId);
-
 module.exports = router;

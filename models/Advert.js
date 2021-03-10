@@ -85,7 +85,8 @@ advertSchema.statics.listAdverts = function (
     .sort(sortBy)
     .select(fields)
     .limit(limit)
-    .skip(skip);
+    .skip(skip)
+    .populate('createdBy', 'username');
 
   return query;
 };
