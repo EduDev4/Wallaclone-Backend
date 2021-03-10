@@ -25,6 +25,10 @@ const advertSchema = mongoose.Schema(
       type: String,
       default: '/img/adverts/noAdImage.jpg',
     },
+    thumb: {
+      type: String,
+      default: '',
+    },
     tags: {
       type: [String],
       index: true,
@@ -35,11 +39,6 @@ const advertSchema = mongoose.Schema(
       ref: 'User',
     },
     isFavBy: {
-      type: Map,
-      of: Boolean,
-      default: {},
-    },
-    isSoldBy: {
       type: Map,
       of: Boolean,
       default: {},
@@ -81,6 +80,7 @@ advertSchema.statics.listAdverts = function (
   skip,
 ) {
   const query = this.find(filterObj)
+    .populate('createdBy', 'username')
     .collation({ locale: 'es' })
     .sort(sortBy)
     .select(fields)
@@ -89,6 +89,28 @@ advertSchema.statics.listAdverts = function (
 
   return query;
 };
+
+const generateThumbPath = imagePath => {
+  if (imagePath !== '/img/adverts/noAdImage.jpg') {
+    const image = imagePath.split('/')[imagePath.split('/').length - 1];
+    return `${imagePath.split('/', 4).join('/')}/thumbnails/thumb_${image}`;
+  }
+  return '';
+};
+
+advertSchema.post('save', function () {
+  this.set({
+    thumb: generateThumbPath(this.image),
+  });
+  this.save();
+});
+
+advertSchema.post('updateOne', function () {
+  this.set({
+    thumb: generateThumbPath(this.image),
+  });
+  this.save();
+});
 
 const Advert = mongoose.model('Advert', advertSchema);
 

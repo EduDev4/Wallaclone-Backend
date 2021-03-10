@@ -38,7 +38,7 @@ const getAllAdverts = async (req, res, next) => {
       skip,
     );
 
-    console.log(adverts);
+    //console.log(adverts);
     res.status(200).json({
       status: 'success',
       requestedAt: req.requestTime,
@@ -112,7 +112,7 @@ const createAdvert = async (req, res, next) => {
   try {
     if (req.file) {
       req.body.image = req.file.path.replace('public', '');
-      createThumb(req.file.filename, req.file.path);
+      createThumb(req.file.filename, req.file.destination);
     }
 
     // Add user id to new advert
@@ -130,7 +130,7 @@ const createAdvert = async (req, res, next) => {
   } catch (err) {
     if (req.file) {
       fs.unlinkSync(req.file.path);
-      deleteThumb(req.file.filename);
+      deleteThumb(req.file.filename, req.userId);
     }
     next(createError(422, err.message));
   }
@@ -205,13 +205,16 @@ const updateAdvertById = async (req, res, next) => {
 
     // If there is a new image, delete the previous one
     if (req.file) {
-      fs.unlinkSync(`public/${adv.image}`);
+      fs.unlinkSync(`public${adv.image}`);
 
       // Send previous image name to thumbnail service for delete
-      deleteThumb(adv.image.split('/')[adv.image.split('/').length - 1]);
+      deleteThumb(
+        adv.image.split('/')[adv.image.split('/').length - 1],
+        req.userId,
+      );
 
       // Send new image name to thumbnail service for create
-      createThumb(req.file.filename, req.file.path);
+      createThumb(req.file.filename, req.file.destination);
 
       // Update parameter with image name
       req.body.image = req.file.path.replace('public', '');
@@ -232,7 +235,7 @@ const updateAdvertById = async (req, res, next) => {
     });
   } catch (err) {
     if (req.file) {
-      deleteThumb(req.file.filename);
+      deleteThumb(req.file.filename, req.userId);
       fs.unlinkSync(req.file.path);
     }
     next(createError(422, err.message));
@@ -256,8 +259,10 @@ const deleteAdvertById = async (req, res, next) => {
       fs.unlinkSync(`public${advert.image}`);
 
       // Send image name to deleting thumbnail service
-      // deleteThumb(advert.image);
-      deleteThumb(advert.image.split('/')[advert.image.split('/').length - 1]);
+      deleteThumb(
+        advert.image.split('/')[advert.image.split('/').length - 1],
+        req.userId,
+      );
     }
 
     // Second, delete advert from DB
