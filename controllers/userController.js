@@ -338,6 +338,7 @@ class UserController {
           res.status(200).json({
             status: 'success',
             data: {
+              isFavBy: advert.isFavBy,
               message: req.__(message),
             },
           });
