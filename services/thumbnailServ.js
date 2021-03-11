@@ -20,13 +20,13 @@ responder.on('make thumbnail', async (req, done) => {
       } from client ... OK ${Date.now().toString()}`,
     );
     console.log(`Service: creating thumbnail ...`);
-
     await (await Jimp.read(`${req.imagePath}${req.imageName}`))
       .scaleToFit(120, 120)
       .write(`${req.imagePath}thumbnails/${thumbName}`);
 
     // if everything went well, thumbnail is created, return name
     console.log(`Service: thumbnail ${thumbName} created ... OK ${Date.now()}`);
+
     done(thumbName);
   } catch (err) {
     console.log(err);

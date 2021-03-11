@@ -79,28 +79,6 @@ advertSchema.statics.listAdverts = function (
   return query;
 };
 
-const generateThumbPath = imagePath => {
-  if (imagePath) {
-    const image = imagePath.split('/')[imagePath.split('/').length - 1];
-    return `${imagePath.split('/', 4).join('/')}/thumbnails/thumb_${image}`;
-  }
-  return '';
-};
-
-advertSchema.post('save', function () {
-  this.set({
-    thumb: generateThumbPath(this.image),
-  });
-  this.save();
-});
-
-advertSchema.post('updateOne', function () {
-  this.set({
-    thumb: generateThumbPath(this.image),
-  });
-  this.save();
-});
-
 const Advert = mongoose.model('Advert', advertSchema);
 
 module.exports = Advert;

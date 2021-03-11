@@ -112,6 +112,9 @@ const createAdvert = async (req, res, next) => {
     if (req.file) {
       req.body.image = req.file.path.replace('public', '');
       createThumb(req.file.filename, req.file.destination);
+      req.body.thumb = `${req.body.image
+        .split('/', 4)
+        .join('/')}/thumbnails/thumb_${req.file.filename}`;
     }
 
     // Add user id to new advert
@@ -221,6 +224,9 @@ const updateAdvertById = async (req, res, next) => {
 
       // Update parameter with image name
       req.body.image = req.file.path.replace('public', '');
+      req.body.thumb = `${req.body.image
+        .split('/', 4)
+        .join('/')}/thumbnails/thumb_${req.file.filename}`;
     }
 
     // Update the advert
