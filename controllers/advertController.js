@@ -111,13 +111,16 @@ const createAdvert = async (req, res, next) => {
   try {
     if (req.file) {
       req.body.image = req.file.path.replace('public', '');
-      createThumb(req.file.filename, req.file.path);
+      createThumb(req.file.filename, req.file.destination);
     }
 
     // Add user id to new advert
     req.body.createdBy = req.userId;
-    const newAdvert = await Advert.create(req.body).pop;
-
+    const { _id } = await Advert.create(req.body);
+    const newAdvert = await Advert.findOne({ _id }).populate(
+      'createdBy',
+      'username',
+    );
     res.status(201).json({
       status: 'success',
       requestedAt: req.requestTime,
@@ -128,7 +131,7 @@ const createAdvert = async (req, res, next) => {
   } catch (err) {
     if (req.file) {
       fs.unlinkSync(req.file.path);
-      deleteThumb(req.file.filename);
+      deleteThumb(req.file.filename, req.userId);
     }
     next(createError(422, err.message));
   }
@@ -203,23 +206,32 @@ const updateAdvertById = async (req, res, next) => {
 
     // If there is a new image, delete the previous one
     if (req.file) {
-      fs.unlinkSync(`public/${adv.image}`);
+      if (adv.image) {
+        fs.unlinkSync(`public${adv.image}`);
 
-      // Send previous image name to thumbnail service for delete
-      deleteThumb(adv.image.split('/')[adv.image.split('/').length - 1]);
+        // Send previous image name to thumbnail service for delete
+        deleteThumb(
+          adv.image.split('/')[adv.image.split('/').length - 1],
+          req.userId,
+        );
+      }
 
       // Send new image name to thumbnail service for create
-      createThumb(req.file.filename, req.file.path);
+      createThumb(req.file.filename, req.file.destination);
 
       // Update parameter with image name
       req.body.image = req.file.path.replace('public', '');
     }
 
     // Update the advert
-    const advertUpd = await Advert.findByIdAndUpdate(req.params.id, req.body, {
+    const { _id } = await Advert.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
+    const advertUpd = await Advert.findOne({ _id }).populate(
+      'createdBy',
+      'username',
+    );
 
     res.status(200).json({
       status: 'success',
@@ -230,7 +242,7 @@ const updateAdvertById = async (req, res, next) => {
     });
   } catch (err) {
     if (req.file) {
-      deleteThumb(req.file.filename);
+      deleteThumb(req.file.filename, req.userId);
       fs.unlinkSync(req.file.path);
     }
     next(createError(422, err.message));
@@ -250,12 +262,14 @@ const deleteAdvertById = async (req, res, next) => {
       return next(createError(401, req.__('Unauthorized Request!!')));
     }
 
-    if (!advert.image.includes('noAdImage')) {
+    if (advert.image) {
       fs.unlinkSync(`public${advert.image}`);
 
       // Send image name to deleting thumbnail service
-      // deleteThumb(advert.image);
-      deleteThumb(advert.image.split('/')[advert.image.split('/').length - 1]);
+      deleteThumb(
+        advert.image.split('/')[advert.image.split('/').length - 1],
+        req.userId,
+      );
     }
 
     // Second, delete advert from DB
@@ -273,10 +287,13 @@ const deleteAdvertById = async (req, res, next) => {
 /** Get Advert Detail */
 const getAdvertById = async (req, res, next) => {
   try {
-    const advert = await Advert.findById(req.params.id);
+    const advert = await Advert.findOne({ _id: req.params.id }).populate(
+      'createdBy',
+      'username',
+    );
 
     if (!advert) return next(createError(404, req._('Advert not found!')));
-    console.log(advert);
+    // console.log(advert);
 
     res.status(200).json({
       status: 'success',

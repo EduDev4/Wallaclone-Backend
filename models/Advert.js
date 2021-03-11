@@ -23,7 +23,11 @@ const advertSchema = mongoose.Schema(
     },
     image: {
       type: String,
-      default: '/img/adverts/noAdImage.jpg',
+      default: '',
+    },
+    thumb: {
+      type: String,
+      default: '',
     },
     tags: {
       type: [String],
@@ -35,11 +39,6 @@ const advertSchema = mongoose.Schema(
       ref: 'User',
     },
     isFavBy: {
-      type: Map,
-      of: Boolean,
-      default: {},
-    },
-    isSoldBy: {
       type: Map,
       of: Boolean,
       default: {},
@@ -58,19 +57,7 @@ const advertSchema = mongoose.Schema(
 );
 
 advertSchema.statics.allowedTags = function () {
-  return [
-    'motor',
-    'fashion',
-    'electronics',
-    'toys',
-    'sports',
-    'work',
-    'services',
-    'games',
-    'pc',
-    'mobile',
-    'other',
-  ];
+  return tagsObjModel.values;
 };
 
 advertSchema.statics.listAdverts = function (
@@ -81,6 +68,7 @@ advertSchema.statics.listAdverts = function (
   skip,
 ) {
   const query = this.find(filterObj)
+    .populate('createdBy', 'username')
     .collation({ locale: 'es' })
     .sort(sortBy)
     .select(fields)
@@ -90,6 +78,28 @@ advertSchema.statics.listAdverts = function (
 
   return query;
 };
+
+const generateThumbPath = imagePath => {
+  if (imagePath) {
+    const image = imagePath.split('/')[imagePath.split('/').length - 1];
+    return `${imagePath.split('/', 4).join('/')}/thumbnails/thumb_${image}`;
+  }
+  return '';
+};
+
+advertSchema.post('save', function () {
+  this.set({
+    thumb: generateThumbPath(this.image),
+  });
+  this.save();
+});
+
+advertSchema.post('updateOne', function () {
+  this.set({
+    thumb: generateThumbPath(this.image),
+  });
+  this.save();
+});
 
 const Advert = mongoose.model('Advert', advertSchema);
 

@@ -9,22 +9,21 @@ const Jimp = require('jimp');
 const fs = require('fs');
 
 const responder = new cote.Responder({ name: 'thumbnail responder' });
-const thumbDirPath = 'public/img/adverts/thumbnails/';
 
 // When user create an advert with image
 responder.on('make thumbnail', async (req, done) => {
   try {
-    const thumbName = `thumb_${req.imagename}`;
+    const thumbName = `thumb_${req.imageName}`;
     console.log(
       `Service: received image ${
-        req.imagename
+        req.imageName
       } from client ... OK ${Date.now().toString()}`,
     );
     console.log(`Service: creating thumbnail ...`);
 
-    await (await Jimp.read(req.imagepath))
+    await (await Jimp.read(`${req.imagePath}${req.imageName}`))
       .scaleToFit(120, 120)
-      .write(`${thumbDirPath}${thumbName}`);
+      .write(`${req.imagePath}thumbnails/${thumbName}`);
 
     // if everything went well, thumbnail is created, return name
     console.log(`Service: thumbnail ${thumbName} created ... OK ${Date.now()}`);
@@ -36,20 +35,20 @@ responder.on('make thumbnail', async (req, done) => {
 
 // When user delete an advert, delete thumbnail
 responder.on('delete thumbnail', (req, done) => {
-  const thumbName = `thumb_${req.imagename}`;
+  const thumbPath = `./public/img/adverts/${req.userId}/thumbnails/thumb_${req.imageName}`;
   console.log(
-    `Service: received image ${req.imagename} form client ... OK ${Date.now()}`,
+    `Service: received image ${req.imageName} form client ... OK ${Date.now()}`,
   );
 
   console.log(`Service: deleting thumbnail ...`);
 
-  fs.unlink(`${thumbDirPath}${thumbName}`, err => {
+  fs.unlink(thumbPath, err => {
     if (err) {
       console.log(`Service: failed to delete local image => ${err}`);
       done();
     } else {
       console.log(
-        `Service: thumbnail ${thumbName} deleted ... OK ${Date.now()}`,
+        `Service: thumbnail ${req.imageName} deleted ... OK ${Date.now()}`,
       );
       // if everything went well, thumbnail is deleted
       done('Delete successfully!');

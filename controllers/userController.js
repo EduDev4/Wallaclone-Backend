@@ -385,20 +385,22 @@ class UserController {
 
       if (advert.state === 'Available' || advert.state === 'Reserved') {
         advert.state = 'Sold';
+
         message = 'Advert sold!';
         // TODO: Enviar notificación a usuarios como vendido
       } else {
         advert.state = 'Available';
+
         message = 'Advert available!';
         // TODO: Enviar notificación a usuarios como disponible
       }
 
       advert.save();
-      // console.log(advert);
 
       res.status(200).json({
         status: 'success',
         data: {
+          adStatus: advert.state,
           message: req.__(message),
         },
       });
@@ -412,9 +414,10 @@ class UserController {
    */
   async getUserSold(req, res, next) {
     try {
-      const { sold } = await User.findOne({ _id: req.userId });
-
-      const adverts = await Advert.find({ _id: { $in: sold } });
+      const adverts = await Advert.find({
+        createdBy: req.userId,
+        state: 'Sold',
+      });
 
       res.status(200).json({
         status: 'success',
@@ -484,6 +487,7 @@ class UserController {
       res.status(200).json({
         status: 'success',
         data: {
+          adStatus: advert.state,
           message: req.__(message),
         },
       });
