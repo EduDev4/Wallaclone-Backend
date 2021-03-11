@@ -57,19 +57,7 @@ const advertSchema = mongoose.Schema(
 );
 
 advertSchema.statics.allowedTags = function () {
-  return [
-    'motor',
-    'fashion',
-    'electronics',
-    'toys',
-    'sports',
-    'work',
-    'services',
-    'games',
-    'pc',
-    'mobile',
-    'other',
-  ];
+  return tagsObjModel.values;
 };
 
 advertSchema.statics.listAdverts = function (
