@@ -116,8 +116,11 @@ const createAdvert = async (req, res, next) => {
 
     // Add user id to new advert
     req.body.createdBy = req.userId;
-    const newAdvert = await Advert.create(req.body).pop;
-
+    const { _id } = await Advert.create(req.body);
+    const newAdvert = await Advert.findOne({ _id }).populate(
+      'createdBy',
+      'username',
+    );
     res.status(201).json({
       status: 'success',
       requestedAt: req.requestTime,
@@ -203,13 +206,15 @@ const updateAdvertById = async (req, res, next) => {
 
     // If there is a new image, delete the previous one
     if (req.file) {
-      fs.unlinkSync(`public${adv.image}`);
+      if (adv.image) {
+        fs.unlinkSync(`public${adv.image}`);
 
-      // Send previous image name to thumbnail service for delete
-      deleteThumb(
-        adv.image.split('/')[adv.image.split('/').length - 1],
-        req.userId,
-      );
+        // Send previous image name to thumbnail service for delete
+        deleteThumb(
+          adv.image.split('/')[adv.image.split('/').length - 1],
+          req.userId,
+        );
+      }
 
       // Send new image name to thumbnail service for create
       createThumb(req.file.filename, req.file.destination);
@@ -219,10 +224,14 @@ const updateAdvertById = async (req, res, next) => {
     }
 
     // Update the advert
-    const advertUpd = await Advert.findByIdAndUpdate(req.params.id, req.body, {
+    const { _id } = await Advert.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
+    const advertUpd = await Advert.findOne({ _id }).populate(
+      'createdBy',
+      'username',
+    );
 
     res.status(200).json({
       status: 'success',
@@ -253,7 +262,7 @@ const deleteAdvertById = async (req, res, next) => {
       return next(createError(401, req.__('Unauthorized Request!!')));
     }
 
-    if (!advert.image.includes('noAdImage')) {
+    if (advert.image) {
       fs.unlinkSync(`public${advert.image}`);
 
       // Send image name to deleting thumbnail service
@@ -278,10 +287,13 @@ const deleteAdvertById = async (req, res, next) => {
 /** Get Advert Detail */
 const getAdvertById = async (req, res, next) => {
   try {
-    const advert = await Advert.findById(req.params.id);
+    const advert = await Advert.findOne({ _id: req.params.id }).populate(
+      'createdBy',
+      'username',
+    );
 
     if (!advert) return next(createError(404, req._('Advert not found!')));
-    console.log(advert);
+    // console.log(advert);
 
     res.status(200).json({
       status: 'success',

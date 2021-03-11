@@ -385,20 +385,22 @@ class UserController {
 
       if (advert.state === 'Available' || advert.state === 'Reserved') {
         advert.state = 'Sold';
+
         message = 'Advert sold!';
         // TODO: Enviar notificación a usuarios como vendido
       } else {
         advert.state = 'Available';
+
         message = 'Advert available!';
         // TODO: Enviar notificación a usuarios como disponible
       }
 
       advert.save();
-      // console.log(advert);
 
       res.status(200).json({
         status: 'success',
         data: {
+          adStatus: advert.state,
           message: req.__(message),
         },
       });
@@ -485,6 +487,7 @@ class UserController {
       res.status(200).json({
         status: 'success',
         data: {
+          adStatus: advert.state,
           message: req.__(message),
         },
       });

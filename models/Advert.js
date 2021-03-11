@@ -80,7 +80,7 @@ advertSchema.statics.listAdverts = function (
 };
 
 const generateThumbPath = imagePath => {
-  if (imagePath !== '/img/adverts/noAdImage.jpg') {
+  if (imagePath) {
     const image = imagePath.split('/')[imagePath.split('/').length - 1];
     return `${imagePath.split('/', 4).join('/')}/thumbnails/thumb_${image}`;
   }
