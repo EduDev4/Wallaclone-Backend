@@ -412,9 +412,10 @@ class UserController {
    */
   async getUserSold(req, res, next) {
     try {
-      const { sold } = await User.findOne({ _id: req.userId });
-
-      const adverts = await Advert.find({ _id: { $in: sold } });
+      const adverts = await Advert.find({
+        createdBy: req.userId,
+        state: 'Sold',
+      });
 
       res.status(200).json({
         status: 'success',

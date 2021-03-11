@@ -23,7 +23,7 @@ const advertSchema = mongoose.Schema(
     },
     image: {
       type: String,
-      default: '/img/adverts/noAdImage.jpg',
+      default: '',
     },
     thumb: {
       type: String,
