@@ -7,6 +7,7 @@
 const cote = require('cote');
 const Jimp = require('jimp');
 const fs = require('fs');
+const path = require('path');
 
 const responder = new cote.Responder({ name: 'thumbnail responder' });
 
@@ -14,6 +15,7 @@ const responder = new cote.Responder({ name: 'thumbnail responder' });
 responder.on('make thumbnail', async (req, done) => {
   try {
     const thumbName = `thumb_${req.imageName}`;
+    const thumbPath = path.join(req.imagePath, 'thumbnails', thumbName);
     console.log(
       `Service: received image ${
         req.imageName
@@ -22,11 +24,10 @@ responder.on('make thumbnail', async (req, done) => {
     console.log(`Service: creating thumbnail ...`);
     await (await Jimp.read(`${req.imagePath}${req.imageName}`))
       .scaleToFit(120, 120)
-      .write(`${req.imagePath}thumbnails/${thumbName}`);
+      .write(thumbPath);
 
     // if everything went well, thumbnail is created, return name
     console.log(`Service: thumbnail ${thumbName} created ... OK ${Date.now()}`);
-
     done(thumbName);
   } catch (err) {
     console.log(err);
@@ -35,23 +36,27 @@ responder.on('make thumbnail', async (req, done) => {
 
 // When user delete an advert, delete thumbnail
 responder.on('delete thumbnail', (req, done) => {
-  const thumbPath = `./public/img/adverts/${req.userId}/thumbnails/thumb_${req.imageName}`;
+  const thumbRelPath = path.join('./public', req.thumbPath);
   console.log(
-    `Service: received image ${req.imageName} form client ... OK ${Date.now()}`,
+    `Service: received image ${path.basename(
+      req.thumbPath,
+    )} form client ... OK ${Date.now()}`,
   );
 
   console.log(`Service: deleting thumbnail ...`);
 
-  fs.unlink(thumbPath, err => {
+  fs.unlink(thumbRelPath, err => {
     if (err) {
       console.log(`Service: failed to delete local image => ${err}`);
       done();
     } else {
       console.log(
-        `Service: thumbnail ${req.imageName} deleted ... OK ${Date.now()}`,
+        `Service: thumbnail ${path.basename(
+          req.thumbPath,
+        )} deleted ... OK ${Date.now()}`,
       );
       // if everything went well, thumbnail is deleted
-      done('Delete successfully!');
+      done('Thumbnail delete successfully!');
     }
   });
 });
