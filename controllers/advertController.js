@@ -1,6 +1,7 @@
 const fs = require('fs');
 const createError = require('http-errors');
 
+const path = require('path');
 const Advert = require('../models/Advert');
 const User = require('../models/User');
 const { createThumb, deleteThumb } = require('../lib/thumbLib');
@@ -112,9 +113,12 @@ const createAdvert = async (req, res, next) => {
     if (req.file) {
       req.body.image = req.file.path.replace('public', '');
       createThumb(req.file.filename, req.file.destination);
-      req.body.thumb = `${req.body.image
-        .split('/', 4)
-        .join('/')}/thumbnails/thumb_${req.file.filename}`;
+
+      req.body.thumb = `${path.join(
+        req.file.destination.substr(8),
+        'thumbnails',
+        `thumb_${req.file.filename}`,
+      )}`;
     }
 
     // Add user id to new advert
@@ -134,7 +138,13 @@ const createAdvert = async (req, res, next) => {
   } catch (err) {
     if (req.file) {
       fs.unlinkSync(req.file.path);
-      deleteThumb(req.file.filename, req.userId);
+      deleteThumb(
+        `${path.join(
+          req.file.destination.substr(8),
+          'thumbnails',
+          `thumb_${req.file.filename}`,
+        )}`,
+      );
     }
     next(createError(422, err.message));
   }
@@ -210,13 +220,10 @@ const updateAdvertById = async (req, res, next) => {
     // If there is a new image, delete the previous one
     if (req.file) {
       if (adv.image) {
-        fs.unlinkSync(`public${adv.image}`);
+        fs.unlinkSync(path.join('public', adv.image));
 
         // Send previous image name to thumbnail service for delete
-        deleteThumb(
-          adv.image.split('/')[adv.image.split('/').length - 1],
-          req.userId,
-        );
+        deleteThumb(adv.thumb);
       }
 
       // Send new image name to thumbnail service for create
@@ -224,9 +231,11 @@ const updateAdvertById = async (req, res, next) => {
 
       // Update parameter with image name
       req.body.image = req.file.path.replace('public', '');
-      req.body.thumb = `${req.body.image
-        .split('/', 4)
-        .join('/')}/thumbnails/thumb_${req.file.filename}`;
+      req.body.thumb = `${path.join(
+        req.file.destination.substr(8),
+        'thumbnails',
+        `thumb_${req.file.filename}`,
+      )}`;
     }
 
     // Update the advert
@@ -248,7 +257,13 @@ const updateAdvertById = async (req, res, next) => {
     });
   } catch (err) {
     if (req.file) {
-      deleteThumb(req.file.filename, req.userId);
+      deleteThumb(
+        `${path.join(
+          req.file.destination.substr(8),
+          'thumbnails',
+          `thumb_${req.file.filename}`,
+        )}`,
+      );
       fs.unlinkSync(req.file.path);
     }
     next(createError(422, err.message));
@@ -269,13 +284,10 @@ const deleteAdvertById = async (req, res, next) => {
     }
 
     if (advert.image) {
-      fs.unlinkSync(`public${advert.image}`);
+      fs.unlinkSync(path.join('public', advert.image));
 
-      // Send image name to deleting thumbnail service
-      deleteThumb(
-        advert.image.split('/')[advert.image.split('/').length - 1],
-        req.userId,
-      );
+      // Send previous image name to thumbnail service for delete
+      deleteThumb(advert.thumb);
     }
 
     // Second, delete advert from DB
