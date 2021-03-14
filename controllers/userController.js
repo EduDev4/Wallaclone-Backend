@@ -356,7 +356,10 @@ class UserController {
     try {
       const { favorites } = await User.findOne({ _id: req.userId });
 
-      const adverts = await Advert.find({ _id: { $in: favorites } });
+      const adverts = await Advert.find({ _id: { $in: favorites } }).populate(
+        'createdBy',
+        'username',
+      );
 
       res.status(200).json({
         status: 'success',
@@ -418,7 +421,7 @@ class UserController {
       const adverts = await Advert.find({
         createdBy: req.userId,
         state: 'Sold',
-      });
+      }).populate('createdBy', 'username');
 
       res.status(200).json({
         status: 'success',
