@@ -116,6 +116,9 @@ class UserController {
             //   user: doc,
             // });
             // COMPLETE: Respuesta unificada del user signup
+
+            sendConfirmationEmail({ toUser: newuser.email }, newuser.token);
+
             res.status(200).json({
               status: 'success',
               requestedAt: req.requestTime,

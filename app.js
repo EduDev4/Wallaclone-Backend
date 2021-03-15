@@ -58,6 +58,7 @@ app.use('/', indexRouter);
  */
 app.use('/apiv1/users', require('./routes/apiv1/users'));
 app.use('/apiv1/adverts', require('./routes/apiv1/adverts'));
+app.use('/apiv1/notifications', require('./routes/apiv1/notifications'));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
