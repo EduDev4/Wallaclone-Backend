@@ -15,11 +15,13 @@ exports.sendResetPasswordEmail = ({ toUser }, hash) => {
   //pass the data object to send the email
   return sender.sendEmail(message);
 };
-exports.sendConfirmationEmail = ({ toUser }) => {
+exports.sendConfirmationEmail = ({ toUser }, hash) => {
+  const url = `${process.env.DOMAIN}/user/confirm/${hash}`;
   const message = {
     //name of the email template that we will be using
     templateName: 'password_reset_confirm',
     //sender's and receiver's email
+    activate_email_url: url,
     receiver: toUser,
   };
   //pass the data object to send the email
