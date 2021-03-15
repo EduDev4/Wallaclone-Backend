@@ -5,6 +5,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const router = require('./src/router');
 const syncServiceDetails = require('./src/sync_service_details');
@@ -13,8 +14,9 @@ const syncServiceDetails = require('./src/sync_service_details');
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
 // Add body parser for Notify device registration
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(router);
@@ -24,8 +26,8 @@ syncServiceDetails();
 
 // Create http server and run it
 const server = http.createServer(app);
-const port = process.env.PORT || 3005;
-server.listen(port, function() {
+const port = process.env.CHAT_PORT || 3005;
+server.listen(port, function () {
   console.log('Express server running on *:' + port);
 });
 
