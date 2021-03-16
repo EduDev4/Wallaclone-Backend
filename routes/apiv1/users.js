@@ -44,6 +44,7 @@ router.post('/sold/:adId', jwtAuth(), userController.setUnsetSold);
 router.get('/sold', jwtAuth(), userController.getUserSold);
 
 router.post('/reservation/:adId', jwtAuth(), userController.setUnsetReserved);
+router.get('/reserved', jwtAuth(), userController.getUserReserved);
 
 /* PATCH /users/editUser/:username, Edit user data */
 router.patch('/editUser/:username', jwtAuth(), userController.updateUserData);

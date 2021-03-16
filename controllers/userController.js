@@ -439,21 +439,21 @@ class UserController {
   /**
    * GET /:id (Get username from userId)
    */
-  async getUserNameFromId(req, res, next) {
-    try {
-      const { username } = await User.findById(req.params.id);
-
-      res.status(200).json({
-        status: 'success',
-        requestedAt: req.requestTime,
-        data: {
-          username,
-        },
-      });
-    } catch (error) {
-      return next(createError(404, error.message));
-    }
-  }
+  // async getUserNameFromId(req, res, next) {
+  //   try {
+  //     const { username } = await User.findById(req.params.id);
+  //
+  //     res.status(200).json({
+  //       status: 'success',
+  //       requestedAt: req.requestTime,
+  //       data: {
+  //         username,
+  //       },
+  //     });
+  //   } catch (error) {
+  //     return next(createError(404, error.message));
+  //   }
+  // }
 
   /**
    * POST /reservation/:adId   (Set or Unset reserved)
@@ -493,6 +493,29 @@ class UserController {
         data: {
           adStatus: advert.state,
           message: req.__(message),
+        },
+      });
+    } catch (err) {
+      return next(createError(404, err.message));
+    }
+  }
+
+  /**
+   * GET /reserved   (Get all user sold ones)
+   */
+  async getUserReserved(req, res, next) {
+    try {
+      const adverts = await Advert.find({
+        createdBy: req.userId,
+        state: 'Reserved',
+      }).populate('createdBy', 'username');
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          results: adverts.length,
+          adverts: adverts,
         },
       });
     } catch (err) {
