@@ -338,7 +338,7 @@ class UserController {
           res.status(200).json({
             status: 'success',
             data: {
-              isFavBy: advert.isFavBy,
+              advert: advert,
               message: req.__(message),
             },
           });
@@ -439,21 +439,21 @@ class UserController {
   /**
    * GET /:id (Get username from userId)
    */
-  // async getUserNameFromId(req, res, next) {
-  //   try {
-  //     const { username } = await User.findById(req.params.id);
-  //
-  //     res.status(200).json({
-  //       status: 'success',
-  //       requestedAt: req.requestTime,
-  //       data: {
-  //         username,
-  //       },
-  //     });
-  //   } catch (error) {
-  //     return next(createError(404, error.message));
-  //   }
-  // }
+  async getUserNameFromId(req, res, next) {
+    try {
+      const { username } = await User.findById(req.params.id);
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          username,
+        },
+      });
+    } catch (error) {
+      return next(createError(404, error.message));
+    }
+  }
 
   /**
    * POST /reservation/:adId   (Set or Unset reserved)
@@ -501,7 +501,7 @@ class UserController {
   }
 
   /**
-   * GET /reserved   (Get all user sold ones)
+   * GET /reserved   (Get all user reserved ones)
    */
   async getUserReserved(req, res, next) {
     try {
