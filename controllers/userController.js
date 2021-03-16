@@ -338,7 +338,7 @@ class UserController {
           res.status(200).json({
             status: 'success',
             data: {
-              isFavBy: advert.isFavBy,
+              advert: advert,
               message: req.__(message),
             },
           });
@@ -493,6 +493,29 @@ class UserController {
         data: {
           adStatus: advert.state,
           message: req.__(message),
+        },
+      });
+    } catch (err) {
+      return next(createError(404, err.message));
+    }
+  }
+
+  /**
+   * GET /reserved   (Get all user reserved ones)
+   */
+  async getUserReserved(req, res, next) {
+    try {
+      const adverts = await Advert.find({
+        createdBy: req.userId,
+        state: 'Reserved',
+      }).populate('createdBy', 'username');
+
+      res.status(200).json({
+        status: 'success',
+        requestedAt: req.requestTime,
+        data: {
+          results: adverts.length,
+          adverts: adverts,
         },
       });
     } catch (err) {
