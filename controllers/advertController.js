@@ -29,7 +29,15 @@ const getAllAdverts = async (req, res, next) => {
     const start = req.query.start * 1 || 1;
     const limit = req.query.limit * 1 || 12;
     const skip = (start - 1) * limit;
+    
 
+    const TotalAdverts = await Advert.listAdverts(
+      filterObj,
+      sortBy,
+      fields,
+    );
+    const pages =(Math.ceil(TotalAdverts.length)/12) +1;
+    console.log(pages)
     const adverts = await Advert.listAdverts(
       filterObj,
       sortBy,
@@ -38,11 +46,12 @@ const getAllAdverts = async (req, res, next) => {
       skip,
     );
 
-    console.log(adverts);
+
     res.status(200).json({
       status: 'success',
       requestedAt: req.requestTime,
       data: {
+        pages: pages,
         results: adverts.length,
         adverts: adverts,
       },
