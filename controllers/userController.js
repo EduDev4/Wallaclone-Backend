@@ -317,7 +317,10 @@ class UserController {
    */
   async setUnsetFav(req, res, next) {
     try {
-      const advert = await Advert.findById(req.params.adId);
+      const advert = await Advert.findById(req.params.adId).populate(
+        'createdBy',
+        'username',
+      );
       let message;
       User.findOne({ _id: req.userId })
         .then(user => {
@@ -338,7 +341,7 @@ class UserController {
           res.status(200).json({
             status: 'success',
             data: {
-              advert: advert,
+              advert,
               message: req.__(message),
             },
           });
