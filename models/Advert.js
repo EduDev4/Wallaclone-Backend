@@ -68,7 +68,6 @@ advertSchema.statics.listAdverts = function (
   skip,
 ) {
   const query = this.find(filterObj)
-    .populate('createdBy', 'username')
     .collation({ locale: 'es' })
     .sort(sortBy)
     .select(fields)

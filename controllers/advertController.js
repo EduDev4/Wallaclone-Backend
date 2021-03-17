@@ -7,8 +7,6 @@ const User = require('../models/User');
 const { createThumb, deleteThumb } = require('../lib/thumbLib');
 const { getFilterObj } = require('../utils/apiFilter');
 
-// COMPLETE: Obtener lista de todos los tags (getTags)
-
 /* Get Adverts */
 const getAllAdverts = async (req, res, next) => {
   try {
@@ -31,6 +29,9 @@ const getAllAdverts = async (req, res, next) => {
     const limit = req.query.limit * 1 || 12;
     const skip = (start - 1) * limit;
 
+    const TotalAdverts = await Advert.countDocuments(filterObj);
+    const pages = Math.ceil(TotalAdverts / 12);
+
     const adverts = await Advert.listAdverts(
       filterObj,
       sortBy,
@@ -43,7 +44,8 @@ const getAllAdverts = async (req, res, next) => {
       status: 'success',
       requestedAt: req.requestTime,
       data: {
-        results: adverts.length,
+        pages,
+        results: TotalAdverts,
         adverts: adverts,
       },
     });
@@ -232,7 +234,7 @@ const deleteAllUserAds = async (req, res, next) => {
     fs.rmdirSync(`public/img/adverts/${req.userId}`, { recursive: true });
     next();
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return next(createError(400, err.message));
   }
 };
