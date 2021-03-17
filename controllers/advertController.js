@@ -7,8 +7,6 @@ const User = require('../models/User');
 const { createThumb, deleteThumb } = require('../lib/thumbLib');
 const { getFilterObj } = require('../utils/apiFilter');
 
-// TODO: Obtener lista de todos los tags (getTags)
-
 /* Get Adverts */
 const getAllAdverts = async (req, res, next) => {
   try {
@@ -56,62 +54,6 @@ const getAllAdverts = async (req, res, next) => {
   }
 };
 
-/**
- * @api {post} /apiv1/adverts/ 3.Create an advert (requires auth token)
- * @apiName PostAdvert
- * @apiGroup Adverts
- * @apiDescription Create one advert, content in the body (form-data)
- *
- * @apiHeader (Header) {String} Authorization Format: "Bearer **user-token**"
- * @apiParam (Querystring) {String} lang Response language: default 'en' ['en', 'es']
- * @apiParam (Body) {file} image Advert file image (jpg/png)
- * @apiParam (Body) {String} name Advert name
- * @apiParam (Body) {Number} price Advert price
- * @apiParam (Body) {String} description Advert description
- * @apiParam (Body) {Boolean} sale Advert type (to sale:true, to buy: false)
- * @apiParam (Body) {String[]} tags Advert tags ('motor', 'fashion', 'electronics', ...)
- * @apiParamExample {json} Input
- *    {
- *      "image": "galaxytab.jpg",
- *      "name": "Tel 4 user1",
- *      "price": 100,
- *      "description": "Tablet 10 pulgadas en perfecto estado",
- *      "sale": "true",
- *      "tags": "work"
- *    }
- * @apiSuccess {String} status Status response
- * @apiSuccess {Date} requestedAt Request date/time
- * @apiSuccess {Object} data Data response
- * @apiSuccess {Object} data.advert Advert data created
- * @apiSuccessExample {json} Success
- *   {
- *      "status": "success",
- *      "requestedAt": "2020-09-10T10:55:52.067Z",
- *      "advert": {
- *           "sale": true,
- *           "image": "/img/adverts/6038bba6e41a860519d142b5/1614336286863_galaxytab.jpg",
- *           "tags": [
- *               "work"
- *           ],
- *           "state": "Available",
- *           "_id": "6038d11e7a90c90b105726d4",
- *           "name": "Tel 4 user1",
- *           "price": 100,
- *           "description": "Tablet 10 pulgadas en perfecto estado",
- *           "createdBy": "6038bba6e41a860519d142b5",
- *           "createdAt": "2021-02-26T10:44:46.873Z",
- *           "updatedAt": "2021-02-26T10:44:46.873Z",
- *           "__v": 0
- *       }
- *    }
- * @apiErrorExample {json} List error
- *    {
- *      "status": "fail",
- *      "code": 422,
- *      "message": "Advert validation failed: name: An advert must have a name"
- *    }
- */
-
 const createAdvert = async (req, res, next) => {
   try {
     if (req.file) {
@@ -153,62 +95,6 @@ const createAdvert = async (req, res, next) => {
     next(createError(422, err.message));
   }
 };
-
-/**
- * @api {put} /apiv1/adverts/:id 4.Update an advert (requires auth token)
- * @apiName PutAdvert
- * @apiGroup Adverts
- *
- * @apiDescription Update one advert by id param
- *
- * @apiHeader (Header) {String} Authorization Format: "Bearer **user-token**"
- * @apiParam (Querystring) {String} id Advert unique ID
- * @apiParam (Querystring) {String} lang Response language: default 'en' ['en', 'es']
- * @apiParam (Body) {file} image Advert file image (jpg/png)
- * @apiParam (Body) {String} name Advert name
- * @apiParam (Body) {Number} price Advert price
- * @apiParam (Body) {String} description Advert description
- * @apiParam (Body) {Boolean} sale Advert type (to sale:true, to buy: false)
- * @apiParam (Body) {String[]} tags Advert tags ('motor', 'fashion', 'electronics', ...)
- * @apiParamExample {json} Input
- *    {
- *      "name": "Galaxy Tab 10.1",
- *      "price": 80,
- *      "tags": "['work','electronics']"
- *    }
- * @apiSuccess {String} status Status response
- * @apiSuccess {Date} requestedAt Request date/time
- * @apiSuccess {Object} data Data response
- * @apiSuccess {Object} data.advert Advert data updated
- * @apiSuccessExample {json} Success
- *    {
- *      "status": "success",
- *      "requestedAt": "2020-09-10T10:55:52.067Z",
- *      "advert": {
- *           "sale": true,
- *           "image": "/img/adverts/6038bba6e41a860519d142b5/1614336286863_galaxytab.jpg",
- *           "tags": [
- *               "work",
- *               "electronics"
- *           ],
- *           "state": "Available",
- *           "_id": "6038d11e7a90c90b105726d4",
- *           "name": "Galaxy Tab 10.1",
- *           "price": 80,
- *           "description": "Tablet 10 pulgadas en perfecto estado",
- *           "createdBy": "6038bba6e41a860519d142b5",
- *           "createdAt": "2021-02-26T10:44:46.873Z",
- *           "updatedAt": "2021-02-26T11:29:58.647Z",
- *           "__v": 0
- *       }
- *    }
- * @apiErrorExample {json} List error
- *    {
- *      "status": "fail",
- *      "code": 422,
- *      "message": "Advert validation failed: name: An advert must have a name"
- *    }
- */
 
 const updateAdvertById = async (req, res, next) => {
   try {
@@ -348,7 +234,7 @@ const deleteAllUserAds = async (req, res, next) => {
     fs.rmdirSync(`public/img/adverts/${req.userId}`, { recursive: true });
     next();
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return next(createError(400, err.message));
   }
 };
