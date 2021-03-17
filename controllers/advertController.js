@@ -31,6 +31,9 @@ const getAllAdverts = async (req, res, next) => {
     const limit = req.query.limit * 1 || 12;
     const skip = (start - 1) * limit;
 
+    const TotalAdverts = await Advert.countDocuments(filterObj);
+    const pages = Math.ceil(TotalAdverts / 12);
+
     const adverts = await Advert.listAdverts(
       filterObj,
       sortBy,
@@ -43,7 +46,8 @@ const getAllAdverts = async (req, res, next) => {
       status: 'success',
       requestedAt: req.requestTime,
       data: {
-        results: adverts.length,
+        pages,
+        results: TotalAdverts,
         adverts: adverts,
       },
     });
