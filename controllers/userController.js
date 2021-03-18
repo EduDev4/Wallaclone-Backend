@@ -9,6 +9,7 @@ const Advert = require('../models/Advert');
 const {
   sendResetPasswordEmail,
   sendConfirmationEmail,
+  sendSignUpConfirmationEmail,
   sendUnsubscribeEmail,
 } = require('./mailerController');
 
@@ -103,7 +104,7 @@ class UserController {
             .digest('hex');
 
           // eslint-disable-next-line no-shadow
-          newuser.save((err, doc) => {
+          newuser.save(async (err, doc) => {
             if (err) {
               console.log(err);
               // COMPLETE Usar createError
@@ -116,6 +117,10 @@ class UserController {
             //   user: doc,
             // });
             // COMPLETE: Respuesta unificada del user signup
+            await sendSignUpConfirmationEmail(
+              { toUser: newuser.email },
+              newuser.token,
+            );
             res.status(200).json({
               status: 'success',
               requestedAt: req.requestTime,
