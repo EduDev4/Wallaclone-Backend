@@ -128,6 +128,21 @@ const updateAdvertById = async (req, res, next) => {
       )}`;
     }
 
+    if (req.body.price !== adv.price) {
+      adv.isFavBy.forEach(async (val, key) => {
+        if (val) {
+          const { email } = await User.findById(key);
+          // console.log(`Notification to ${email} = ${message}`);
+
+          await sendEmailNotification(
+            { toUser: email },
+            `${adv.name} has changed the price: BEFORE ${adv.price}€ ===> NOW ${req.body.price}€!!`,
+            `/adverts/view/${adv._id}`,
+          );
+        }
+      });
+    }
+
     // Update the advert
     const { _id } = await Advert.findByIdAndUpdate(req.params.id, req.body, {
       new: true,

@@ -5,6 +5,7 @@ const _ = require('lodash');
 const createError = require('http-errors');
 const User = require('../models/User');
 const Advert = require('../models/Advert');
+const { sendEmailNotification } = require('./notificationController');
 
 const {
   sendResetPasswordEmail,
@@ -398,15 +399,25 @@ class UserController {
 
       if (advert.state === 'Available' || advert.state === 'Reserved') {
         advert.state = 'Sold';
-
         message = 'Advert sold!';
-        // TODO: Enviar notificación a usuarios como vendido
       } else {
         advert.state = 'Available';
-
         message = 'Advert available!';
-        // TODO: Enviar notificación a usuarios como disponible
       }
+
+      // Notification to users favorites
+      advert.isFavBy.forEach(async (val, key) => {
+        if (val) {
+          const { email } = await User.findById(key);
+          // console.log(`Notification to ${email} = ${message}`);
+
+          await sendEmailNotification(
+            { toUser: email },
+            `${advert.name} has changed state: ${advert.state.toUpperCase()}!`,
+            `/adverts/view/${advert._id}`,
+          );
+        }
+      });
 
       advert.save();
 
@@ -487,15 +498,26 @@ class UserController {
       if (advert.state === 'Available') {
         advert.state = 'Reserved';
         message = 'Advert reserved!';
-        // TODO: Enviar notificación a usuarios como reservado
       } else {
         advert.state = 'Available';
         message = 'Advert available!';
-        // TODO: Enviar notificación a usuarios como disponible
       }
 
+      // Notification to users favorites
+      advert.isFavBy.forEach(async (val, key) => {
+        if (val) {
+          const { email } = await User.findById(key);
+          // console.log(`Notification to ${email} = ${message}`);
+
+          await sendEmailNotification(
+            { toUser: email },
+            `${advert.name} has changed state: ${advert.state.toUpperCase()}!`,
+            `/adverts/view/${advert._id}`,
+          );
+        }
+      });
+
       advert.save();
-      // console.log(advert);
 
       res.status(200).json({
         status: 'success',
