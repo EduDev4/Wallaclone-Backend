@@ -6,7 +6,7 @@ const Advert = require('../models/Advert');
 const User = require('../models/User');
 const { createThumb, deleteThumb } = require('../lib/thumbLib');
 const { getFilterObj } = require('../utils/apiFilter');
-
+const { sendEmailNotification } = require('./notificationController');
 /* Get Adverts */
 const getAllAdverts = async (req, res, next) => {
   try {
@@ -165,6 +165,7 @@ const deleteAdvertById = async (req, res, next) => {
   try {
     // First, check if there is an image and delete it
     const advert = await Advert.findById(req.params.id);
+    const user = await User.findById(req.userId);
 
     if (!advert) return next(createError(404, req.__('Advert not found!')));
 
@@ -182,6 +183,12 @@ const deleteAdvertById = async (req, res, next) => {
 
     // Second, delete advert from DB
     await Advert.findByIdAndRemove(req.params.id);
+
+    await sendEmailNotification(
+      { toUser: user.email },
+      `Anuncio Eliminado: ${advert.name}`,
+      '/adverts',
+    );
 
     res.status(204).json({
       status: 'success',
