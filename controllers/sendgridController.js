@@ -7,6 +7,7 @@ const templates = {
   password_reset_link: 'd-7f00299dc34c4c6bac56089128ee0d39',
   activate_email: 'd-8bef55409ce44454a9ad6efc9ade77d6',
   user_deletion: 'd-ec39e9b5ad1341f1ac9a53f9f9573d29',
+  generic_notification: 'd-1b342596d9ee47819a00e1e2e8c2e18c',
 };
 function sendEmail(message) {
   const msg = {
@@ -19,6 +20,8 @@ function sendEmail(message) {
       name: message.name,
       confirm_account_url: message.confirm_account_url,
       activate_email_url: message.activate_email_url,
+      Email_Text: message.text,
+      advert_url: message.url_callback,
     },
   };
   //send the email

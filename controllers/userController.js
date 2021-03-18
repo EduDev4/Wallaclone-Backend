@@ -121,6 +121,7 @@ class UserController {
               { toUser: newuser.email },
               newuser.token,
             );
+
             res.status(200).json({
               status: 'success',
               requestedAt: req.requestTime,
