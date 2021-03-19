@@ -9,7 +9,11 @@ const indexRouter = require('./routes/index');
 
 const app = express();
 
-const whitelist = [process.env.DOMAIN, process.env.DOMAIN_PROD];
+const whitelist = [
+  process.env.DOMAIN,
+  process.env.DOMAIN_PROD,
+  process.env.DOMAIN_NODE,
+];
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
