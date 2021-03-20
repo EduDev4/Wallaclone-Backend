@@ -9,7 +9,10 @@ const Jimp = require('jimp');
 const fs = require('fs');
 const path = require('path');
 
-const responder = new cote.Responder({ name: 'thumbnail responder' });
+const responder = new cote.Responder({
+  name: 'Thumbnail responder',
+  key: 'thumbnail',
+});
 
 // When user create an advert with image
 responder.on('make thumbnail', async (req, done) => {
