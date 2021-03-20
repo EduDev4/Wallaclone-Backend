@@ -199,23 +199,24 @@ class UserController {
   async forgotPass(req, res, next) {
     const { email } = req.body;
     try {
-      const user = await User.find({ email });
+      const user = await User.findOne({ email });
       if (!user) {
         return next(createError(422, "User email doesn't exist!"));
       }
       const hash = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-      const obj = {
-        hash: hash,
-      };
-      const newUser = _.extend(...user, obj);
-      await newUser.save();
+      user.hash = hash;
+
+      user.save();
+
       await sendResetPasswordEmail({ toUser: email }, hash);
 
       res.status(200).json({
         status: 'success',
         requestedAt: req.requestTime,
         data: {
-          message: 'Please check your email in order to reset the password!',
+          message: req.__(
+            'Please check your email in order to reset the password!',
+          ),
         },
       });
     } catch (err) {
@@ -228,23 +229,24 @@ class UserController {
    */
   async forgotPassConfirm(req, res, next) {
     const { passwd, hash } = req.body;
-    const user = await User.find({ hash });
-    const { email } = user[0];
+    const user = await User.findOne({ hash });
+    const { email } = user;
 
     try {
-      const obj = {
-        passwd: await User.hashPassword(passwd),
-        hash: hash,
-      };
-      const newUser = _.extend(...user, obj);
-      await newUser.save();
+      // const obj = {
+      //   passwd: await User.hashPassword(passwd),
+      //   hash: hash,
+      // };
+      user.passwd = await User.hashPassword(passwd);
+      // const newUser = _.extend(...user, obj);
+      user.save();
       await sendConfirmationEmail({ toUser: email });
 
       res.status(200).json({
         status: 'success',
         requestedAt: req.requestTime,
         data: {
-          message: 'Password has been resseted',
+          message: req.__('Password has been resseted'),
         },
       });
     } catch (err) {

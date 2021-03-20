@@ -27,20 +27,20 @@ async function initUsers() {
 
   const result = await User.insertMany([
     {
-      username: 'user1',
-      email: 'wallaclone123@gmail.com',
+      username: 'spiderman',
+      email: 'spiderman@gmail.com',
       passwd: await User.hashPassword('123456'),
       confirmed: true,
     },
     {
-      username: 'user2',
-      email: 'user2@example.com',
+      username: 'batman',
+      email: 'batman@example.com',
       passwd: await User.hashPassword('123456'),
       confirmed: true,
     },
     {
-      username: 'user3',
-      email: 'user3@example.com',
+      username: 'thor',
+      email: 'thor@example.com',
       passwd: await User.hashPassword('123456'),
       confirmed: true,
     },
