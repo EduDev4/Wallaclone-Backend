@@ -14,20 +14,23 @@ router.post('/subscription', async (req, res) => {
   res.status(201).json();
 });
 
-router.post('/new-message', async (req, res) => {
-  const { message } = req.body;
-  // Payload Notification
-  const payload = JSON.stringify({
-    title: 'My Custom Notification',
-    message,
+exports.sendNotify = () => {
+  router.post('/new-message', async (req, res) => {
+    console.log(req.body);
+    const { message } = req.body;
+    // Payload Notification
+    const payload = JSON.stringify({
+      title: 'My Custom Notification',
+      message,
+    });
+    res.status(200).json();
+    try {
+      await webpush.sendNotification(pushSubscripton, payload);
+    } catch (error) {
+      console.log(error);
+    }
   });
-  res.status(200).json();
-  try {
-    await webpush.sendNotification(pushSubscripton, payload);
-  } catch (error) {
-    console.log(error);
-  }
-});
+};
 
 /* GET home page, API documentation. */
 router.get('/', (req, res, next) => {

@@ -13,6 +13,7 @@ const {
   sendSignUpConfirmationEmail,
   sendUnsubscribeEmail,
 } = require('./mailerController');
+const { sendNotify } = require('../routes');
 
 // COMPLETE: Poner o quitar favoritos
 // TODO: Actualización de datos de usuario
@@ -514,6 +515,17 @@ class UserController {
             `${advert.name} has changed state: ${advert.state.toUpperCase()}!`,
             `/adverts/view/${advert._id}`,
           );
+
+          const payload = JSON.stringify({
+            title: 'Advert Changed',
+            message: 'One of your favorites adverts has been reserved',
+          });
+          //TODO: DA error al hacer el sendNotify
+          /* try {
+            await sendNotify(payload);
+          } catch (error) {
+            console.log(error);
+          }*/
         }
       });
 
