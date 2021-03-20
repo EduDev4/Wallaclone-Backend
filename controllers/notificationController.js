@@ -1,18 +1,22 @@
-const sender = require('./sendgridController.js');
+const User = require('../models/User');
+const { sendEmailNotification } = require('../lib/coteConfLib');
 
-exports.sendEmailNotification = ({ toUser }, text, callbackPath) => {
-  // eslint-disable-next-line no-template-curly-in-string
-  const url = `${process.env.DOMAIN}${callbackPath}`;
+exports.sendUsersWithFavNotify = (advert, priceNow, mode = 'state') => {
+  const arrayMap = Array.from(advert.isFavBy.entries()).filter(data => data[1]);
 
-  const message = {
-    //name of the email template that we will be using
-    templateName: 'generic_notification',
-    //sender's and receiver's email
-    receiver: toUser,
-    text: text,
-    //unique url for the user to confirm the account
-    url_callback: url,
-  };
-  //pass the data object to send the email
-  return sender.sendEmail(message);
+  const usersToNotify = [];
+  arrayMap.forEach(async data => {
+    const { email } = await User.findById(data[0]);
+    usersToNotify.push(email);
+    if (usersToNotify.length === arrayMap.length) {
+      // console.log(usersToNotify);
+      sendEmailNotification(
+        { toUser: usersToNotify },
+        mode !== 'price'
+          ? `${advert.name} has changed state: ${advert.state.toUpperCase()}!`
+          : `${advert.name} has changed price: BEFORE ${advert.price}€ => NOW ${priceNow}€!`,
+        `/adverts/view/${advert._id}`,
+      );
+    }
+  });
 };

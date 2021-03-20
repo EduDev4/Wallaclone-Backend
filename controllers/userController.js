@@ -5,7 +5,8 @@ const _ = require('lodash');
 const createError = require('http-errors');
 const User = require('../models/User');
 const Advert = require('../models/Advert');
-const { sendEmailNotification } = require('./notificationController');
+const { sendUsersWithFavNotify } = require('./notificationController');
+// const { sendEmailNotification } = require('./notificationController');
 
 const {
   sendResetPasswordEmail,
@@ -406,18 +407,9 @@ class UserController {
       }
 
       // Notification to users favorites
-      advert.isFavBy.forEach(async (val, key) => {
-        if (val) {
-          const { email } = await User.findById(key);
-          // console.log(`Notification to ${email} = ${message}`);
 
-          await sendEmailNotification(
-            { toUser: email },
-            `${advert.name} has changed state: ${advert.state.toUpperCase()}!`,
-            `/adverts/view/${advert._id}`,
-          );
-        }
-      });
+      // eslint-disable-next-line no-use-before-define
+      sendUsersWithFavNotify(advert);
 
       advert.save();
 
@@ -504,18 +496,8 @@ class UserController {
       }
 
       // Notification to users favorites
-      advert.isFavBy.forEach(async (val, key) => {
-        if (val) {
-          const { email } = await User.findById(key);
-          // console.log(`Notification to ${email} = ${message}`);
-
-          await sendEmailNotification(
-            { toUser: email },
-            `${advert.name} has changed state: ${advert.state.toUpperCase()}!`,
-            `/adverts/view/${advert._id}`,
-          );
-        }
-      });
+      // eslint-disable-next-line no-use-before-define
+      sendUsersWithFavNotify(advert);
 
       advert.save();
 

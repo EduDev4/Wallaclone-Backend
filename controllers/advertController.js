@@ -4,9 +4,14 @@ const createError = require('http-errors');
 const path = require('path');
 const Advert = require('../models/Advert');
 const User = require('../models/User');
-const { createThumb, deleteThumb } = require('../lib/thumbLib');
+const { sendUsersWithFavNotify } = require('./notificationController');
+const {
+  createThumb,
+  deleteThumb,
+  sendEmailNotification,
+} = require('../lib/coteConfLib');
 const { getFilterObj } = require('../utils/apiFilter');
-const { sendEmailNotification } = require('./notificationController');
+// const { sendEmailNotification } = require('./notificationController');
 /* Get Adverts */
 const getAllAdverts = async (req, res, next) => {
   try {
@@ -74,6 +79,17 @@ const createAdvert = async (req, res, next) => {
       'createdBy',
       'username',
     );
+
+    const querySearch = `/adverts?name=${newAdvert.name}&price=${
+      newAdvert.price - 1
+    }-${newAdvert.price + 100}&sale=${!newAdvert.sale}`;
+    const { email } = await User.findById(req.userId);
+    sendEmailNotification(
+      { toUser: [email] },
+      `Advert Deleted: ${newAdvert.name}. Next link show you if there are ads related to your interests.`,
+      querySearch,
+    );
+
     res.status(201).json({
       status: 'success',
       requestedAt: req.requestTime,
@@ -129,18 +145,7 @@ const updateAdvertById = async (req, res, next) => {
     }
 
     if (req.body.price !== adv.price) {
-      adv.isFavBy.forEach(async (val, key) => {
-        if (val) {
-          const { email } = await User.findById(key);
-          // console.log(`Notification to ${email} = ${message}`);
-
-          await sendEmailNotification(
-            { toUser: email },
-            `${adv.name} has changed the price: BEFORE ${adv.price}€ ===> NOW ${req.body.price}€!!`,
-            `/adverts/view/${adv._id}`,
-          );
-        }
-      });
+      sendUsersWithFavNotify(adv, req.body.price, 'price');
     }
 
     // Update the advert
@@ -199,8 +204,8 @@ const deleteAdvertById = async (req, res, next) => {
     // Second, delete advert from DB
     await Advert.findByIdAndRemove(req.params.id);
 
-    await sendEmailNotification(
-      { toUser: user.email },
+    sendEmailNotification(
+      { toUser: [user.email] },
       `Anuncio Eliminado: ${advert.name}`,
       '/adverts',
     );
