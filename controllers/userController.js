@@ -222,10 +222,10 @@ class UserController {
    */
   async forgotPassConfirm(req, res, next) {
     const { passwd, hash } = req.body;
-    const user = await User.findOne({ hash });
-    const { email } = user;
-
     try {
+      const user = await User.findOne({ hash });
+      const { email } = user;
+
       user.passwd = await User.hashPassword(passwd);
 
       user.save();
