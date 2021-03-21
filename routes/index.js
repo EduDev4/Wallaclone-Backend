@@ -14,14 +14,14 @@ router.post('/subscription', async (req, res) => {
   res.status(201).json();
 });
 
-exports.sendNotify = () => {
+function sendNotify() {
   router.post('/new-message', async (req, res) => {
     console.log(req.body);
-    const { message } = req.body;
+    const { msg } = req.body;
     // Payload Notification
     const payload = JSON.stringify({
       title: 'My Custom Notification',
-      message,
+      msg,
     });
     res.status(200).json();
     try {
@@ -30,7 +30,7 @@ exports.sendNotify = () => {
       console.log(error);
     }
   });
-};
+}
 
 /* GET home page, API documentation. */
 router.get('/', (req, res, next) => {
@@ -38,4 +38,5 @@ router.get('/', (req, res, next) => {
   res.redirect('/apidoc');
 });
 
+exports.sendNotyfy = sendNotify;
 module.exports = router;

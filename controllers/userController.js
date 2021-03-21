@@ -13,7 +13,7 @@ const {
   sendSignUpConfirmationEmail,
   sendUnsubscribeEmail,
 } = require('./mailerController');
-const { sendNotify } = require('../routes');
+const { sendNotify } = require('../routes/index');
 
 // COMPLETE: Poner o quitar favoritos
 // TODO: Actualización de datos de usuario
@@ -521,11 +521,11 @@ class UserController {
             message: 'One of your favorites adverts has been reserved',
           });
           //TODO: DA error al hacer el sendNotify
-          /* try {
-            await sendNotify(payload);
+          try {
+            await sendNotify({ payload: payload });
           } catch (error) {
             console.log(error);
-          }*/
+          }
         }
       });
 
