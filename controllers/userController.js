@@ -159,7 +159,7 @@ class UserController {
         return next(createError(401, 'The token provided is not valid!'));
       }
 
-      if (false) {
+      if (Date.now() > user.expires) {
         await user.remove();
         return next(createError(401, 'Token expired!'));
       }
@@ -222,10 +222,10 @@ class UserController {
    */
   async forgotPassConfirm(req, res, next) {
     const { passwd, hash } = req.body;
-    try {
-      const user = await User.findOne({ hash });
-      const { email } = user;
+    const user = await User.findOne({ hash });
+    const { email } = user;
 
+    try {
       user.passwd = await User.hashPassword(passwd);
 
       user.save();
