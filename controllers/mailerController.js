@@ -2,7 +2,11 @@ const sender = require('./sendgridController.js');
 
 exports.sendResetPasswordEmail = ({ toUser }, hash) => {
   // eslint-disable-next-line no-template-curly-in-string
-  const url = `${process.env.DOMAIN}/resetpass/${hash}`;
+  const url = `${
+    process.env.NODE_ENV === 'production'
+      ? process.env.DOMAIN_PROD
+      : process.env.DOMAIN
+  }/resetpass/${hash}`;
 
   const message = {
     //name of the email template that we will be using
@@ -27,7 +31,11 @@ exports.sendConfirmationEmail = ({ toUser }) => {
 };
 
 exports.sendSignUpConfirmationEmail = ({ toUser }, hash) => {
-  const url = `${process.env.DOMAIN}/signup/confirm/${hash}`;
+  const url = `${
+    process.env.NODE_ENV === 'production'
+      ? process.env.DOMAIN_PROD
+      : process.env.DOMAIN
+  }/signup/confirm/${hash}`;
   const message = {
     //name of the email template that we will be using
     templateName: 'activate_email',
