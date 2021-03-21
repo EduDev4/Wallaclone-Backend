@@ -1,19 +1,18 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const _ = require('lodash');
 const createError = require('http-errors');
 const User = require('../models/User');
 const Advert = require('../models/Advert');
+const { sendUsersWithFavNotify } = require('./notificationController');
+// const { sendEmailNotification } = require('./notificationController');
 
 const {
   sendResetPasswordEmail,
   sendConfirmationEmail,
+  sendSignUpConfirmationEmail,
   sendUnsubscribeEmail,
 } = require('./mailerController');
-
-// COMPLETE: Poner o quitar favoritos
-// TODO: Actualización de datos de usuario
 
 class UserController {
   /**
@@ -32,7 +31,6 @@ class UserController {
 
       if (!user || !(await bcrypt.compare(passwd, user.passwd))) {
         return next(createError(401, 'Invalid credentials!'));
-        // COMPLETE crear error con new Error a next
       }
 
       jwt.sign(
@@ -57,7 +55,7 @@ class UserController {
         },
       );
     } catch (error) {
-      console.log('error:', error);
+      // console.log('error:', error);
       next(createError(401, error.message));
     }
   }
@@ -69,6 +67,14 @@ class UserController {
     try {
       const newuser = new User(req.body);
 
+      if (req.body.passwd !== req.body.passwd2) {
+        return next(
+          createError(
+            400,
+            'Your password and validation password does not match',
+          ),
+        );
+      }
       newuser.passwd = await User.hashPassword(newuser.passwd);
 
       User.findOne(
@@ -90,7 +96,7 @@ class UserController {
             try {
               user.remove();
             } catch (error) {
-              console.log(error);
+              // console.log(error);
               return next(createError(400, error.message));
             }
           }
@@ -103,10 +109,9 @@ class UserController {
             .digest('hex');
 
           // eslint-disable-next-line no-shadow
-          newuser.save((err, doc) => {
+          newuser.save(async (err, doc) => {
             if (err) {
-              console.log(err);
-              // COMPLETE Usar createError
+              // console.log(err);
               return next(createError(400, err.message));
             }
             // TODO enviar email al usuario con el enlace para confirmar:
@@ -116,6 +121,11 @@ class UserController {
             //   user: doc,
             // });
             // COMPLETE: Respuesta unificada del user signup
+            await sendSignUpConfirmationEmail(
+              { toUser: newuser.email },
+              newuser.token,
+            );
+
             res.status(200).json({
               status: 'success',
               requestedAt: req.requestTime,
@@ -127,7 +137,7 @@ class UserController {
         },
       );
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return next(createError(400, error.message));
     }
   }
@@ -162,7 +172,7 @@ class UserController {
       // return res
       //   .status(200)
       //   .json({ succes: true, message: 'User email confirmed' });
-      // COMPLETE: Respuesta unificada del user signup confirmation
+
       res.status(200).json({
         status: 'success',
         requestedAt: req.requestTime,
@@ -171,8 +181,7 @@ class UserController {
         },
       });
     } catch (err) {
-      console.log(err);
-      // COMPLETE usar error handler
+      // console.log(err);
       return next(createError(400, err.message));
     }
   }
@@ -183,23 +192,24 @@ class UserController {
   async forgotPass(req, res, next) {
     const { email } = req.body;
     try {
-      const user = await User.find({ email });
+      const user = await User.findOne({ email });
       if (!user) {
         return next(createError(422, "User email doesn't exist!"));
       }
       const hash = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-      const obj = {
-        hash: hash,
-      };
-      const newUser = _.extend(...user, obj);
-      await newUser.save();
+      user.hash = hash;
+
+      user.save();
+
       await sendResetPasswordEmail({ toUser: email }, hash);
 
       res.status(200).json({
         status: 'success',
         requestedAt: req.requestTime,
         data: {
-          message: 'Please check your email in order to reset the password!',
+          message: req.__(
+            'Please check your email in order to reset the password!',
+          ),
         },
       });
     } catch (err) {
@@ -212,23 +222,21 @@ class UserController {
    */
   async forgotPassConfirm(req, res, next) {
     const { passwd, hash } = req.body;
-    const user = await User.find({ hash });
-    const { email } = user[0];
+    const user = await User.findOne({ hash });
+    const { email } = user;
 
     try {
-      const obj = {
-        passwd: await User.hashPassword(passwd),
-        hash: hash,
-      };
-      const newUser = _.extend(...user, obj);
-      await newUser.save();
+      user.passwd = await User.hashPassword(passwd);
+
+      user.save();
+
       await sendConfirmationEmail({ toUser: email });
 
       res.status(200).json({
         status: 'success',
         requestedAt: req.requestTime,
         data: {
-          message: 'Password has been resseted',
+          message: req.__('Password has been resseted'),
         },
       });
     } catch (err) {
@@ -247,7 +255,6 @@ class UserController {
 
       await User.deleteOne({ _id: req.userId });
 
-      //COMPLETE: Enviar email de confirmación de baja
       await sendUnsubscribeEmail({ toUser: email });
 
       res.status(204).json({
@@ -392,15 +399,16 @@ class UserController {
 
       if (advert.state === 'Available' || advert.state === 'Reserved') {
         advert.state = 'Sold';
-
         message = 'Advert sold!';
-        // TODO: Enviar notificación a usuarios como vendido
       } else {
         advert.state = 'Available';
-
         message = 'Advert available!';
-        // TODO: Enviar notificación a usuarios como disponible
       }
+
+      // Notification to users favorites
+
+      // eslint-disable-next-line no-use-before-define
+      sendUsersWithFavNotify(advert);
 
       advert.save();
 
@@ -481,15 +489,16 @@ class UserController {
       if (advert.state === 'Available') {
         advert.state = 'Reserved';
         message = 'Advert reserved!';
-        // TODO: Enviar notificación a usuarios como reservado
       } else {
         advert.state = 'Available';
         message = 'Advert available!';
-        // TODO: Enviar notificación a usuarios como disponible
       }
 
+      // Notification to users favorites
+      // eslint-disable-next-line no-use-before-define
+      sendUsersWithFavNotify(advert);
+
       advert.save();
-      // console.log(advert);
 
       res.status(200).json({
         status: 'success',

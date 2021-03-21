@@ -26,6 +26,20 @@ exports.sendConfirmationEmail = ({ toUser }) => {
   return sender.sendEmail(message);
 };
 
+exports.sendSignUpConfirmationEmail = ({ toUser }, hash) => {
+  const url = `${process.env.DOMAIN}/signup/confirm/${hash}`;
+  const message = {
+    //name of the email template that we will be using
+    templateName: 'activate_email',
+    //sender's and receiver's email
+    receiver: toUser,
+    //unique url for the user to confirm the account
+    activate_email_url: url,
+  };
+  //pass the data object to send the email
+  return sender.sendEmail(message);
+};
+
 exports.sendUnsubscribeEmail = ({ toUser }) => {
   const message = {
     //name of the email template that we will be using

@@ -1,7 +1,7 @@
 /**
  * SERVICE to make thumbnails images from original
  * advert image. When an advert is created and upload
- * new image, this one create another copy with size 100x100px
+ * new image, this one create another copy with size 120x120px
  */
 
 const cote = require('cote');
@@ -9,7 +9,10 @@ const Jimp = require('jimp');
 const fs = require('fs');
 const path = require('path');
 
-const responder = new cote.Responder({ name: 'thumbnail responder' });
+const responder = new cote.Responder({
+  name: 'Thumbnail responder',
+  key: 'thumbnail',
+});
 
 // When user create an advert with image
 responder.on('make thumbnail', async (req, done) => {

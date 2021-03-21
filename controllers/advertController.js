@@ -4,9 +4,14 @@ const createError = require('http-errors');
 const path = require('path');
 const Advert = require('../models/Advert');
 const User = require('../models/User');
-const { createThumb, deleteThumb } = require('../lib/thumbLib');
+const { sendUsersWithFavNotify } = require('./notificationController');
+const {
+  createThumb,
+  deleteThumb,
+  sendEmailNotification,
+} = require('../lib/coteConfLib');
 const { getFilterObj } = require('../utils/apiFilter');
-
+// const { sendEmailNotification } = require('./notificationController');
 /* Get Adverts */
 const getAllAdverts = async (req, res, next) => {
   try {
@@ -74,6 +79,17 @@ const createAdvert = async (req, res, next) => {
       'createdBy',
       'username',
     );
+
+    const querySearch = `/adverts?name=${newAdvert.name}&price=${
+      newAdvert.price - 1
+    }-${newAdvert.price + 100}&sale=${!newAdvert.sale}`;
+    const { email } = await User.findById(req.userId);
+    sendEmailNotification(
+      { toUser: [email] },
+      `Advert ${newAdvert.name} created!. Next link show you if there are ads related to your interests.`,
+      querySearch,
+    );
+
     res.status(201).json({
       status: 'success',
       requestedAt: req.requestTime,
@@ -128,6 +144,10 @@ const updateAdvertById = async (req, res, next) => {
       )}`;
     }
 
+    if (req.body.price !== adv.price) {
+      sendUsersWithFavNotify(adv, req.body.price, 'price');
+    }
+
     // Update the advert
     const { _id } = await Advert.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -165,6 +185,7 @@ const deleteAdvertById = async (req, res, next) => {
   try {
     // First, check if there is an image and delete it
     const advert = await Advert.findById(req.params.id);
+    const user = await User.findById(req.userId);
 
     if (!advert) return next(createError(404, req.__('Advert not found!')));
 
@@ -182,6 +203,12 @@ const deleteAdvertById = async (req, res, next) => {
 
     // Second, delete advert from DB
     await Advert.findByIdAndRemove(req.params.id);
+
+    sendEmailNotification(
+      { toUser: [user.email] },
+      `Anuncio Eliminado: ${advert.name}`,
+      '/adverts',
+    );
 
     res.status(204).json({
       status: 'success',
