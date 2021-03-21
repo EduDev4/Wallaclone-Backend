@@ -72,6 +72,14 @@ class UserController {
     try {
       const newuser = new User(req.body);
 
+      if (req.body.passwd !== req.body.passwd2) {
+        return next(
+          createError(
+            400,
+            'Your password and validation password does not match',
+          ),
+        );
+      }
       newuser.passwd = await User.hashPassword(newuser.passwd);
 
       User.findOne(
