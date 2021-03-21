@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const _ = require('lodash');
 const createError = require('http-errors');
 const User = require('../models/User');
 const Advert = require('../models/Advert');
@@ -14,9 +13,6 @@ const {
   sendSignUpConfirmationEmail,
   sendUnsubscribeEmail,
 } = require('./mailerController');
-
-// COMPLETE: Poner o quitar favoritos
-// TODO: Actualización de datos de usuario
 
 class UserController {
   /**
@@ -35,7 +31,6 @@ class UserController {
 
       if (!user || !(await bcrypt.compare(passwd, user.passwd))) {
         return next(createError(401, 'Invalid credentials!'));
-        // COMPLETE crear error con new Error a next
       }
 
       jwt.sign(
@@ -60,7 +55,7 @@ class UserController {
         },
       );
     } catch (error) {
-      console.log('error:', error);
+      // console.log('error:', error);
       next(createError(401, error.message));
     }
   }
@@ -101,7 +96,7 @@ class UserController {
             try {
               user.remove();
             } catch (error) {
-              console.log(error);
+              // console.log(error);
               return next(createError(400, error.message));
             }
           }
@@ -116,8 +111,7 @@ class UserController {
           // eslint-disable-next-line no-shadow
           newuser.save(async (err, doc) => {
             if (err) {
-              console.log(err);
-              // COMPLETE Usar createError
+              // console.log(err);
               return next(createError(400, err.message));
             }
             // TODO enviar email al usuario con el enlace para confirmar:
@@ -143,7 +137,7 @@ class UserController {
         },
       );
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return next(createError(400, error.message));
     }
   }
@@ -178,7 +172,7 @@ class UserController {
       // return res
       //   .status(200)
       //   .json({ succes: true, message: 'User email confirmed' });
-      // COMPLETE: Respuesta unificada del user signup confirmation
+
       res.status(200).json({
         status: 'success',
         requestedAt: req.requestTime,
@@ -187,8 +181,7 @@ class UserController {
         },
       });
     } catch (err) {
-      console.log(err);
-      // COMPLETE usar error handler
+      // console.log(err);
       return next(createError(400, err.message));
     }
   }
@@ -233,13 +226,10 @@ class UserController {
     const { email } = user;
 
     try {
-      // const obj = {
-      //   passwd: await User.hashPassword(passwd),
-      //   hash: hash,
-      // };
       user.passwd = await User.hashPassword(passwd);
-      // const newUser = _.extend(...user, obj);
+
       user.save();
+
       await sendConfirmationEmail({ toUser: email });
 
       res.status(200).json({
@@ -265,7 +255,6 @@ class UserController {
 
       await User.deleteOne({ _id: req.userId });
 
-      //COMPLETE: Enviar email de confirmación de baja
       await sendUnsubscribeEmail({ toUser: email });
 
       res.status(204).json({

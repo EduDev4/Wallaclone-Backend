@@ -86,7 +86,7 @@ const createAdvert = async (req, res, next) => {
     const { email } = await User.findById(req.userId);
     sendEmailNotification(
       { toUser: [email] },
-      `Advert Deleted: ${newAdvert.name}. Next link show you if there are ads related to your interests.`,
+      `Advert ${newAdvert.name} created!. Next link show you if there are ads related to your interests.`,
       querySearch,
     );
 

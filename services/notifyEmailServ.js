@@ -1,3 +1,7 @@
+/**
+ * SERVICE to send email notifications to users
+ */
+
 require('dotenv').config();
 const cote = require('cote');
 const sender = require('../controllers/sendgridController');
