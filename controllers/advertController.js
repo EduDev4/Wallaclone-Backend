@@ -144,7 +144,7 @@ const updateAdvertById = async (req, res, next) => {
       )}`;
     }
 
-    if (req.body.price !== adv.price) {
+    if (req.body.price * 1 !== adv.price) {
       sendUsersWithFavNotify(adv, req.body.price, 'price');
     }
 
