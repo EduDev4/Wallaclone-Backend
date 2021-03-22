@@ -45,6 +45,7 @@ app.use(i18n.init);
 // Middleware for catch request date
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+  req.timeNow = Date.now();
   next();
 });
 
