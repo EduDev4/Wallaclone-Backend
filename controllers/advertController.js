@@ -84,6 +84,8 @@ const createAdvert = async (req, res, next) => {
       newAdvert.price - 1
     }-${newAdvert.price + 100}&sale=${!newAdvert.sale}`;
     const { email } = await User.findById(req.userId);
+
+    //Send notification to micro service
     sendEmailNotification(
       { toUser: [email] },
       `Advert ${newAdvert.name} created!. Next link show you if there are ads related to your interests.`,
