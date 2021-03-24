@@ -5,14 +5,12 @@ exports.sendUsersWithFavNotify = (advert, priceNow, mode = 'state') => {
   const arrayMap = Array.from(advert.isFavBy.entries()).filter(data => data[1]);
 
   const usersToNotify = [];
-  let count = arrayMap.length;
-  arrayMap.forEach(async data => {
-    count -= 1;
+  arrayMap.forEach(async (data, idx) => {
     const user = await User.findById(data[0]);
     if (user) {
       usersToNotify.push(user.email);
-      if (count === 0) {
-        console.log(usersToNotify);
+      if (idx === arrayMap.length - 1) {
+        console.log('Notify to:', usersToNotify, 'idx:', idx);
         sendEmailNotification(
           { toUser: usersToNotify },
           mode !== 'price'
