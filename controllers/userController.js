@@ -158,8 +158,8 @@ class UserController {
       if (!user) {
         return next(createError(401, 'The token provided is not valid!'));
       }
-
-      if (req.timeNow > user.expires) {
+      //TODO: Comprobación de token expirado: req.timeNow > user.expires
+      if (false) {
         await user.remove();
         return next(createError(401, 'Token expired!'));
       }
